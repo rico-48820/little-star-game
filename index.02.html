@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小天才空间站 - 4-7岁空间能力成长地图</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* 官方研究建议的黄蓝高对比配色 */
+            --primary-yellow: #FFEA7A;
+            --shadow-yellow: #D4AF37;
+            --primary-blue: #38A9FF;
+            --shadow-blue: #2A7EBF;
+            --bg-color: #F0F9FF;
+            --text-dark: #2D3436;
+        }
+
+        body {
+            font-family: 'Fredoka One', 'Arial Rounded MT Bold', sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            color: var(--text-dark);
+        }
+
+        /* 核心品牌Logo设计：基于红发双辫女孩插画提取 [用户图二] */
+       .logo-container {
+            margin-top: 40px;
+            width: 120px;
+            height: 120px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 8px solid var(--primary-yellow);
+            box-shadow: 0 10px 0 var(--primary-blue);
+            position: relative;
+        }
+
+       .logo-girl-icon {
+            width: 80px;
+            height: 80px;
+            background: #E17055; /* 红发色 */
+            mask-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.25.23 2.45.65 3.55.23.63.78 1.07 1.45 1.07.83 0 1.5-.67 1.5-1.5 0-.15-.02-.29-.06-.43-.32-.9-.49-1.87-.49-2.89 0-4.41 3.59-8 8-8s8 3.59 8 8c0 1.02-.17 1.99-.49 2.89-.04.14-.06.28-.06.43 0.83.67 1.5 1.5 1.5.67 0 1.22-.44 1.45-1.07.42-1.1.65-2.3.65-3.55 0-5.52-4.48-10-10-10zM5.5 13c.83 0 1.5-.67 1.5-1.5S6.33 10 5.5 10 4 10.67 4 11.5s.67 1.5 1.5 1.5zm13 0c.83 0 1.5-.67 1.5-1.5S19.17 10 18.33 10s-1.5.67-1.5 1.5.67 1.5 1.5 1.5z"/></svg>');
+            -webkit-mask-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="45" r="30"/><rect x="15" y="40" width="15" height="40" rx="7"/><rect x="70" y="40" width="15" height="40" rx="7"/></svg>');
+            mask-repeat: no-repeat;
+            mask-size: contain;
+        }
+
+        /* 成长感进度系统 */
+       .xp-bar-container {
+            width: 80%;
+            max-width: 600px;
+            height: 30px;
+            background: #dfe6e9;
+            border-radius: 15px;
+            margin-top: 30px;
+            border: 4px solid white;
+            box-shadow: inset 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+       .xp-fill {
+            width: 45%; /* 初始进度展示 */
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-blue), #81ecec);
+            border-radius: 12px;
+            transition: width 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* 3D 成长感地图设计 */
+       .growth-map {
+            display: flex;
+            flex-direction: column;
+            gap: 60px;
+            margin-top: 80px;
+            width: 100%;
+            align-items: center;
+            position: relative;
+        }
+
+        /* 连接关卡的 3D 虚线 */
+       .growth-line {
+            position: absolute;
+            width: 10px;
+            background: repeating-linear-gradient(to bottom, #bdc3c7, #bdc3c7 15px, transparent 15px, transparent 30px);
+            height: 80%;
+            z-index: 1;
+        }
+
+        /* 三维立体按钮样式 */
+       .age-gate {
+            position: relative;
+            z-index: 2;
+            width: 280px;
+            height: 100px;
+            background-color: var(--shadow-blue);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+       .age-gate-front {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            background-color: var(--primary-blue);
+            border-radius: 20px;
+            transform: translateY(-8px); /* 初始位移产生厚度感 */
+            transition: transform 0.1s, background-color 0.2s;
+            border: 4px solid white;
+        }
+
+       .age-gate:active.age-gate-front {
+            transform: translateY(-2px); /* 点击按下效果 */
+        }
+
+       .age-gate.locked.age-gate-front {
+            background-color: #b2bec3;
+            transform: translateY(0);
+        }
+
+       .age-gate.yellow-theme { background-color: var(--shadow-yellow); }
+       .age-gate.yellow-theme.age-gate-front { background-color: var(--primary-yellow); }
+
+       .age-text {
+            font-size: 24px;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+       .age-gate.yellow-theme.age-text { color: var(--text-dark); }
+
+       .level-description {
+            position: absolute;
+            left: 310px;
+            width: 200px;
+            font-size: 16px;
+            line-height: 1.4;
+        }
+
+       .badge {
+            position: absolute;
+            right: -15px;
+            top: -15px;
+            background: #ff7675;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            border: 3px solid white;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="logo-container">
+        <div class="logo-girl-icon"></div>
+    </div>
+
+    <h1>小小空间建筑师</h1>
+    <div class="xp-bar-container">
+        <div class="xp-fill"></div>
+        <div style="position: absolute; top: 40px; width: 100%; text-align: center;">
+            距离解锁 6-7岁 挑战还差 200 XP
+        </div>
+    </div>
+
+    <div class="growth-map">
+        <div class="growth-line"></div>
+
+        <div class="age-gate" onclick="alert('进入4岁影子匹配模块')">
+            <div class="age-gate-front">
+                <span class="age-text">4岁：形状感知</span>
+                <span class="badge">已达成 ⭐</span>
+            </div>
+            <div class="level-description">通过旋转三维“重影”匹配物体，建立初步空间感。</div>
+        </div>
+
+        <div class="age-gate yellow-theme" onclick="alert('进入5岁迷宫探险模块')">
+            <div class="age-gate-front">
+                <span class="age-text">5岁：动态路径</span>
+                <span class="badge">进行中...</span>
+            </div>
+            <div class="level-description" style="left: -220px; text-align: right;">切换第一人称视角，训练自我中心坐标转换。</div>
+        </div>
+
+        <div class="age-gate locked">
+            <div class="age-gate-front">
+                <span class="age-text">6-7岁：架构大师</span>
+            </div>
+            <div class="level-description">将2D蓝图还原为3D建筑。锁定：需达到等级5。</div>
+        </div>
+    </div>
+
+    <script>
+        // 进度动态更新模拟
+        document.querySelectorAll('.age-gate').forEach(gate => {
+            gate.addEventListener('mouseover', () => {
+                if(!gate.classList.contains('locked')) {
+                    gate.style.transform = 'scale(1.05)';
+                }
+            });
+            gate.addEventListener('mouseleave', () => {
+                gate.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>
