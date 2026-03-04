@@ -1,217 +1,358 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>小天才空间站 - 4-7岁空间能力成长地图</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            /* 官方研究建议的黄蓝高对比配色 */
-            --primary-yellow: #FFEA7A;
-            --shadow-yellow: #D4AF37;
-            --primary-blue: #38A9FF;
-            --shadow-blue: #2A7EBF;
-            --bg-color: #F0F9FF;
-            --text-dark: #2D3436;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>小天才空间站 - 4-7岁空间能力成长地图</title>
+  <meta name="description" content="小天才空间站：为 4-7 岁孩子设计的空间能力成长地图，分年龄解锁形状感知、动态路径和架构大师等关卡。" />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      /* 官方研究建议的黄蓝高对比配色 */
+      --primary-yellow: #ffea7a;
+      --shadow-yellow: #d4af37;
+      --primary-blue: #38a9ff;
+      --shadow-blue: #2a7ebf;
+      --bg-color: #f0f9ff;
+      --text-dark: #2d3436;
+    }
 
-        body {
-            font-family: 'Fredoka One', 'Arial Rounded MT Bold', sans-serif;
-            background-color: var(--bg-color);
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            overflow-x: hidden;
-            color: var(--text-dark);
-        }
+    * {
+      box-sizing: border-box;
+    }
 
-        /* 核心品牌Logo设计：基于红发双辫女孩插画提取 [用户图二] */
-       .logo-container {
-            margin-top: 40px;
-            width: 120px;
-            height: 120px;
-            background: white;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border: 8px solid var(--primary-yellow);
-            box-shadow: 0 10px 0 var(--primary-blue);
-            position: relative;
-        }
+    body {
+      font-family: 'Fredoka One', 'Arial Rounded MT Bold', sans-serif;
+      background-color: var(--bg-color);
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: hidden;
+      color: var(--text-dark);
+      padding: 24px 16px 40px;
+    }
 
-       .logo-girl-icon {
-            width: 80px;
-            height: 80px;
-            background: #E17055; /* 红发色 */
-            mask-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.25.23 2.45.65 3.55.23.63.78 1.07 1.45 1.07.83 0 1.5-.67 1.5-1.5 0-.15-.02-.29-.06-.43-.32-.9-.49-1.87-.49-2.89 0-4.41 3.59-8 8-8s8 3.59 8 8c0 1.02-.17 1.99-.49 2.89-.04.14-.06.28-.06.43 0.83.67 1.5 1.5 1.5.67 0 1.22-.44 1.45-1.07.42-1.1.65-2.3.65-3.55 0-5.52-4.48-10-10-10zM5.5 13c.83 0 1.5-.67 1.5-1.5S6.33 10 5.5 10 4 10.67 4 11.5s.67 1.5 1.5 1.5zm13 0c.83 0 1.5-.67 1.5-1.5S19.17 10 18.33 10s-1.5.67-1.5 1.5.67 1.5 1.5 1.5z"/></svg>');
-            -webkit-mask-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="45" r="30"/><rect x="15" y="40" width="15" height="40" rx="7"/><rect x="70" y="40" width="15" height="40" rx="7"/></svg>');
-            mask-repeat: no-repeat;
-            mask-size: contain;
-        }
+    /* 核心品牌 Logo */
+    .logo-container {
+      margin-top: 12px;
+      width: 120px;
+      height: 120px;
+      background: #ffffff;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 8px solid var(--primary-yellow);
+      box-shadow: 0 10px 0 var(--primary-blue);
+      position: relative;
+    }
 
-        /* 成长感进度系统 */
-       .xp-bar-container {
-            width: 80%;
-            max-width: 600px;
-            height: 30px;
-            background: #dfe6e9;
-            border-radius: 15px;
-            margin-top: 30px;
-            border: 4px solid white;
-            box-shadow: inset 0 4px 6px rgba(0,0,0,0.1);
-            position: relative;
-        }
+    .logo-girl-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: #e17055; /* 红发色 */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      color: #ffeaa7;
+    }
 
-       .xp-fill {
-            width: 45%; /* 初始进度展示 */
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary-blue), #81ecec);
-            border-radius: 12px;
-            transition: width 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
+    /* 标题 */
+    h1 {
+      margin: 24px 0 4px;
+      font-size: clamp(24px, 5vw, 32px);
+      text-align: center;
+      color: var(--text-dark);
+      text-shadow: 0 3px 0 #ffffff, 0 6px 0 rgba(0, 0, 0, 0.08);
+    }
 
-        /* 3D 成长感地图设计 */
-       .growth-map {
-            display: flex;
-            flex-direction: column;
-            gap: 60px;
-            margin-top: 80px;
-            width: 100%;
-            align-items: center;
-            position: relative;
-        }
+    .subtitle {
+      font-size: 14px;
+      text-align: center;
+      color: #636e72;
+      margin-bottom: 18px;
+    }
 
-        /* 连接关卡的 3D 虚线 */
-       .growth-line {
-            position: absolute;
-            width: 10px;
-            background: repeating-linear-gradient(to bottom, #bdc3c7, #bdc3c7 15px, transparent 15px, transparent 30px);
-            height: 80%;
-            z-index: 1;
-        }
+    /* 成长感进度系统 */
+    .xp-bar-container {
+      width: 100%;
+      max-width: 600px;
+      height: 30px;
+      background: #dfe6e9;
+      border-radius: 15px;
+      margin-top: 10px;
+      border: 4px solid #ffffff;
+      box-shadow: inset 0 4px 6px rgba(0, 0, 0, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
 
-        /* 三维立体按钮样式 */
-       .age-gate {
-            position: relative;
-            z-index: 2;
-            width: 280px;
-            height: 100px;
-            background-color: var(--shadow-blue);
-            border-radius: 20px;
-            cursor: pointer;
-            transition: transform 0.1s;
-        }
+    .xp-fill {
+      width: 0%; /* 初始 0，进入时动画增至目标值 */
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary-blue), #81ecec);
+      border-radius: 12px;
+      transition: width 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
 
-       .age-gate-front {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: 100%;
-            background-color: var(--primary-blue);
-            border-radius: 20px;
-            transform: translateY(-8px); /* 初始位移产生厚度感 */
-            transition: transform 0.1s, background-color 0.2s;
-            border: 4px solid white;
-        }
+    .xp-text {
+      position: absolute;
+      top: 38px;
+      width: 100%;
+      text-align: center;
+      font-size: 13px;
+      color: #636e72;
+    }
 
-       .age-gate:active.age-gate-front {
-            transform: translateY(-2px); /* 点击按下效果 */
-        }
+    /* 成长地图容器 */
+    .growth-map {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      margin-top: 60px;
+      width: 100%;
+      max-width: 640px;
+      align-items: stretch;
+      position: relative;
+    }
 
-       .age-gate.locked.age-gate-front {
-            background-color: #b2bec3;
-            transform: translateY(0);
-        }
+    /* 连接关卡的 3D 虚线（居中） */
+    .growth-line {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 10px;
+      background: repeating-linear-gradient(
+        to bottom,
+        #bdc3c7,
+        #bdc3c7 15px,
+        transparent 15px,
+        transparent 30px
+      );
+      height: 100%;
+      z-index: 1;
+      opacity: 0.7;
+    }
 
-       .age-gate.yellow-theme { background-color: var(--shadow-yellow); }
-       .age-gate.yellow-theme.age-gate-front { background-color: var(--primary-yellow); }
+    /* 三维立体按钮样式 */
+    .age-gate {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 320px;
+      margin: 0 auto;
+      background-color: var(--shadow-blue);
+      border-radius: 22px;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.1s;
+      box-shadow: 0 6px 0 rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      padding: 0 14px 12px;
+    }
 
-       .age-text {
-            font-size: 24px;
-            color: white;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
+    .age-gate-front {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      height: 70px;
+      background-color: var(--primary-blue);
+      border-radius: 18px;
+      transform: translateY(-6px); /* 初始位移产生厚度感 */
+      transition: transform 0.1s, background-color 0.2s;
+      border: 4px solid #ffffff;
+      padding: 0 14px;
+    }
 
-       .age-gate.yellow-theme.age-text { color: var(--text-dark); }
+    /* 点击按下效果 */
+    .age-gate:active .age-gate-front {
+      transform: translateY(-2px);
+    }
 
-       .level-description {
-            position: absolute;
-            left: 310px;
-            width: 200px;
-            font-size: 16px;
-            line-height: 1.4;
-        }
+    /* 已锁定的关卡 */
+    .age-gate.locked {
+      cursor: default;
+      opacity: 0.8;
+      box-shadow: 0 4px 0 rgba(0, 0, 0, 0.12);
+    }
 
-       .badge {
-            position: absolute;
-            right: -15px;
-            top: -15px;
-            background: #ff7675;
-            color: white;
-            padding: 5px 12px;
-            border-radius: 12px;
-            font-size: 14px;
-            border: 3px solid white;
-        }
-    </style>
+    .age-gate.locked .age-gate-front {
+      background-color: #b2bec3;
+      transform: translateY(-4px);
+    }
+
+    /* 黄色主题（中间关卡） */
+    .age-gate.yellow-theme {
+      background-color: var(--shadow-yellow);
+    }
+
+    .age-gate.yellow-theme .age-gate-front {
+      background-color: var(--primary-yellow);
+    }
+
+    .age-text {
+      font-size: 18px;
+      color: #ffffff;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .age-gate.yellow-theme .age-text {
+      color: var(--text-dark);
+    }
+
+    .badge {
+      display: inline-block;
+      background: #ff7675;
+      color: #ffffff;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      border: 3px solid #ffffff;
+      white-space: nowrap;
+      margin-left: 6px;
+    }
+
+    .level-description {
+      margin-top: 4px;
+      font-size: 14px;
+      line-height: 1.4;
+      color: #2d3436;
+    }
+
+    .level-description.right {
+      text-align: right;
+    }
+
+    .hint-text {
+      margin-top: 12px;
+      font-size: 12px;
+      text-align: center;
+      color: #95a5a6;
+    }
+
+    @media (max-width: 600px) {
+      .growth-map {
+        gap: 28px;
+        margin-top: 40px;
+      }
+
+      .growth-line {
+        width: 6px;
+      }
+
+      .age-gate {
+        max-width: 100%;
+      }
+
+      .age-gate-front {
+        height: 64px;
+      }
+
+      .age-text {
+        font-size: 16px;
+      }
+
+      .badge {
+        font-size: 11px;
+        padding: 3px 8px;
+      }
+    }
+  </style>
 </head>
 <body>
+  <div class="logo-container">
+    <div class="logo-girl-icon">👧</div>
+  </div>
 
-    <div class="logo-container">
-        <div class="logo-girl-icon"></div>
+  <h1>小小空间建筑师</h1>
+  <div class="subtitle">4-7 岁空间能力成长地图 · 解锁更高难度的空间任务</div>
+
+  <div class="xp-bar-container">
+    <div class="xp-fill" id="xpFill"></div>
+    <div class="xp-text" id="xpText">距离解锁 6-7 岁挑战还差 200 XP</div>
+  </div>
+
+  <div class="growth-map">
+    <div class="growth-line"></div>
+
+    <!-- 4 岁关卡 -->
+    <div class="age-gate" data-level="4">
+      <div class="age-gate-front">
+        <span class="age-text">4 岁：形状感知</span>
+        <span class="badge">已达成 ⭐</span>
+      </div>
+      <div class="level-description">
+        通过旋转三维「重影」匹配物体，建立初步空间感和轮廓识别能力。
+      </div>
     </div>
 
-    <h1>小小空间建筑师</h1>
-    <div class="xp-bar-container">
-        <div class="xp-fill"></div>
-        <div style="position: absolute; top: 40px; width: 100%; text-align: center;">
-            距离解锁 6-7岁 挑战还差 200 XP
-        </div>
+    <!-- 5 岁关卡 -->
+    <div class="age-gate yellow-theme" data-level="5">
+      <div class="age-gate-front">
+        <span class="age-text">5 岁：动态路径</span>
+        <span class="badge">进行中...</span>
+      </div>
+      <div class="level-description right">
+        切换第一人称视角，在迷宫中前进与转弯，训练自我中心坐标转换。
+      </div>
     </div>
 
-    <div class="growth-map">
-        <div class="growth-line"></div>
-
-        <div class="age-gate" onclick="alert('进入4岁影子匹配模块')">
-            <div class="age-gate-front">
-                <span class="age-text">4岁：形状感知</span>
-                <span class="badge">已达成 ⭐</span>
-            </div>
-            <div class="level-description">通过旋转三维“重影”匹配物体，建立初步空间感。</div>
-        </div>
-
-        <div class="age-gate yellow-theme" onclick="alert('进入5岁迷宫探险模块')">
-            <div class="age-gate-front">
-                <span class="age-text">5岁：动态路径</span>
-                <span class="badge">进行中...</span>
-            </div>
-            <div class="level-description" style="left: -220px; text-align: right;">切换第一人称视角，训练自我中心坐标转换。</div>
-        </div>
-
-        <div class="age-gate locked">
-            <div class="age-gate-front">
-                <span class="age-text">6-7岁：架构大师</span>
-            </div>
-            <div class="level-description">将2D蓝图还原为3D建筑。锁定：需达到等级5。</div>
-        </div>
+    <!-- 6–7 岁关卡（锁定） -->
+    <div class="age-gate locked" data-level="6-7">
+      <div class="age-gate-front">
+        <span class="age-text">6-7 岁：架构大师</span>
+      </div>
+      <div class="level-description">
+        将 2D 蓝图还原为 3D 建筑结构。当前锁定：需要达到 5 级并完成前两关。
+      </div>
     </div>
+  </div>
 
-    <script>
-        // 进度动态更新模拟
-        document.querySelectorAll('.age-gate').forEach(gate => {
-            gate.addEventListener('mouseover', () => {
-                if(!gate.classList.contains('locked')) {
-                    gate.style.transform = 'scale(1.05)';
-                }
-            });
-            gate.addEventListener('mouseleave', () => {
-                gate.style.transform = 'scale(1)';
-            });
-        });
-    </script>
+  <div class="hint-text">提示：点击不同年龄卡片，了解每一阶段的空间训练目标。</div>
+
+  <script>
+    // 关卡 hover 动效（锁定关卡不放大）
+    document.querySelectorAll('.age-gate').forEach((gate) => {
+      gate.addEventListener('mouseover', () => {
+        if (!gate.classList.contains('locked')) {
+          gate.style.transform = 'scale(1.03)';
+        }
+      });
+
+      gate.addEventListener('mouseleave', () => {
+        gate.style.transform = 'scale(1)';
+      });
+
+      gate.addEventListener('click', () => {
+        const level = gate.getAttribute('data-level');
+        if (gate.classList.contains('locked')) {
+          alert('该关卡暂未解锁，先完成前面的任务哦！');
+          return;
+        }
+
+        if (level === '4') {
+          alert('进入 4 岁 · 形状感知 模块');
+        } else if (level === '5') {
+          alert('进入 5 岁 · 动态路径 模块');
+        } else {
+          alert('进入空间挑战模块');
+        }
+      });
+    });
+
+    // XP 进度条简单动画：0 -> 45%
+    window.addEventListener('load', () => {
+      const fill = document.getElementById('xpFill');
+      const targetWidth = 45; // 目标进度
+      setTimeout(() => {
+        fill.style.width = targetWidth + '%';
+      }, 300);
+    });
+  </script>
 </body>
 </html>
