@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>小星星空间探险</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--sky:#6EC6F5;--sun:#FFD83D;--grass:#6EC96E;--pink:#FF8DC7;--purple:#B07FE8;--red:#FF6B6B;--dark:#2E3A5C;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito','PingFang SC',sans-serif;background:linear-gradient(180deg,#87CEEB 0%,#B0E0FF 50%,#C8F5C8 100%);min-height:100vh;overflow-x:hidden;user-select:none;}
+.cloud{position:fixed;background:white;border-radius:50px;opacity:.85;pointer-events:none;animation:drift linear infinite;}
+.cloud::before,.cloud::after{content:'';position:absolute;background:white;border-radius:50%;}
+.c1{width:120px;height:40px;top:8%;left:-140px;animation-duration:28s;}.c1::before{width:70px;height:60px;top:-28px;left:15px;}.c1::after{width:55px;height:50px;top:-20px;left:45px;}
+.c2{width:90px;height:30px;top:18%;left:-110px;animation-duration:22s;animation-delay:-10s;}.c2::before{width:50px;height:45px;top:-22px;left:10px;}.c2::after{width:40px;height:38px;top:-16px;left:32px;}
+@keyframes drift{from{left:-200px}to{left:calc(100vw + 200px)}}
+.screen{display:none;min-height:100vh;padding:20px;}
+.screen.active{display:flex;flex-direction:column;align-items:center;}
+#home{justify-content:center;text-align:center;}
+.mascot{font-size:clamp(80px,16vw,120px);animation:float 3s ease-in-out infinite;display:block;margin-bottom:24px;}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+.title{font-size:clamp(34px,8vw,58px);font-weight:900;color:var(--dark);text-shadow:3px 3px 0 var(--sun),5px 5px 0 rgba(0,0,0,.1);line-height:1.1;margin-bottom:8px;animation:bi .8s cubic-bezier(.68,-.55,.265,1.55);}
+@keyframes bi{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
+.sub{font-size:clamp(15px,3.5vw,19px);color:#2A6FBB;font-weight:700;margin-bottom:32px;}
+.cards{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;max-width:660px;margin-bottom:18px;}
+.card{background:white;border-radius:22px;padding:18px 20px;width:138px;cursor:pointer;border:4px solid transparent;transition:all .2s;box-shadow:0 6px 0 rgba(0,0,0,.12);text-align:center;}
+.card:hover{transform:translateY(-4px) scale(1.05);}
+.card:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.12);}
+.card.a3{border-color:var(--pink);}.card.a4{border-color:var(--sun);}.card.a5{border-color:var(--sky);}.card.a6{border-color:var(--purple);}
+.card .ce{font-size:38px;display:block;margin-bottom:6px;}.card .cl{font-size:17px;font-weight:900;color:var(--dark);}.card .cd{font-size:11px;color:#888;margin-top:3px;font-weight:700;}
+#game{justify-content:flex-start;padding:16px;}
+.topbar{width:100%;max-width:700px;display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+.btn-home{background:white;border:3px solid var(--dark);border-radius:50%;width:50px;height:50px;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 0 rgba(0,0,0,.15);flex-shrink:0;transition:all .15s;font-family:inherit;}
+.btn-home:active{transform:translateY(2px);}
+.sbar{background:white;border-radius:18px;padding:7px 14px;font-size:17px;font-weight:900;color:var(--dark);border:3px solid var(--sun);box-shadow:0 3px 0 rgba(0,0,0,.1);display:flex;align-items:center;gap:5px;}
+.progwrap{flex:1;background:rgba(255,255,255,.6);border-radius:20px;height:16px;overflow:hidden;border:2px solid white;}
+.progfill{height:100%;background:linear-gradient(90deg,var(--sky),var(--purple));border-radius:20px;transition:width .4s ease;}
+.btn-hint{background:linear-gradient(135deg,var(--purple),#8A5CD0);border:none;border-radius:100px;padding:9px 20px;font-size:14px;font-weight:900;color:white;cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,.15);font-family:inherit;transition:all .15s;}
+.btn-hint:hover{transform:translateY(-2px);}
+.garea{width:100%;max-width:700px;background:white;border-radius:30px;padding:22px;box-shadow:0 8px 0 rgba(0,0,0,.1);flex:1;}
+.tlabel{font-size:clamp(16px,3.8vw,21px);font-weight:900;color:var(--dark);text-align:center;margin-bottom:18px;line-height:1.4;}
+.szone{display:flex;flex-direction:column;align-items:center;gap:22px;}
+.tbox{width:116px;height:116px;border:5px dashed #ccc;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:66px;transition:all .3s;}
+.tbox.hi{border-color:var(--sun);background:#FFFBE6;transform:scale(1.08);}
+.tbox.ok{border-color:var(--grass);background:#E8FFE8;animation:pop .3s;}
+@keyframes pop{50%{transform:scale(1.2)}}
+.srow{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;}
+.sopt{width:86px;height:86px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:48px;cursor:pointer;border:4px solid #e0e0e0;background:white;transition:all .15s;box-shadow:0 5px 0 rgba(0,0,0,.1);}
+.sopt:hover{transform:translateY(-3px) scale(1.05);border-color:var(--sky);}
+.sopt:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.1);}
+.sopt.bad{animation:shake .4s;border-color:var(--red);background:#FFF0F0;}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}60%{transform:translateX(8px)}80%{transform:translateX(-4px)}}
+.rzone{display:flex;flex-direction:column;align-items:center;gap:18px;}
+.rdemo{display:flex;align-items:center;justify-content:center;gap:22px;flex-wrap:wrap;}
+.rbox{display:flex;flex-direction:column;align-items:center;gap:7px;}
+.rlbl{font-size:12px;font-weight:700;color:#aaa;}
+.rshape{width:108px;height:108px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:60px;border:4px solid #e0e0e0;background:linear-gradient(135deg,#f8f8ff,#fffef8);}
+.rtarget{border-color:var(--sun);background:linear-gradient(135deg,#FFFBE6,#FFF9D0);}
+.rarr{font-size:30px;color:#ccc;animation:pa 1.5s ease-in-out infinite;}
+@keyframes pa{0%,100%{opacity:.5}50%{opacity:1}}
+.rchoices{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;}
+.ropt{width:96px;height:96px;border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:50px;cursor:pointer;border:4px solid #e0e0e0;background:white;transition:all .15s;box-shadow:0 5px 0 rgba(0,0,0,.1);gap:2px;}
+.ropt:hover{transform:translateY(-3px);border-color:var(--purple);}
+.ropt:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.1);}
+.ropt.bad{animation:shake .4s;border-color:var(--red);}
+.adeg{font-size:11px;font-weight:900;color:#aaa;}
+.pzone{display:flex;flex-direction:column;align-items:center;gap:14px;}
+.pscene{background:linear-gradient(180deg,#87CEEB 0%,#87CEEB 60%,#90EE90 60%,#90EE90 100%);border-radius:18px;width:274px;height:176px;position:relative;border:4px solid #ddd;overflow:hidden;}
+.pobj{position:absolute;font-size:40px;transition:all .4s cubic-bezier(.34,1.56,.64,1);}
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:350px;}
+.pbtn{background:white;border:3px solid #e0e0e0;border-radius:14px;padding:12px 6px;font-size:13px;font-weight:900;cursor:pointer;color:var(--dark);box-shadow:0 4px 0 rgba(0,0,0,.1);transition:all .15s;text-align:center;font-family:inherit;}
+.pbtn:hover{transform:translateY(-2px);border-color:var(--sky);background:#EEF8FF;}
+.pbtn:active{transform:translateY(2px);}
+.pbtn.bad{animation:shake .4s;border-color:var(--red);background:#FFF0F0;}
+.pi{font-size:20px;display:block;margin-bottom:1px;}
+.fbk{display:none;position:fixed;inset:0;z-index:999;align-items:center;justify-content:center;flex-direction:column;gap:14px;pointer-events:none;}
+.fbk.on{display:flex;animation:fo 1.5s forwards;}
+@keyframes fo{0%{opacity:1}70%{opacity:1}100%{opacity:0}}
+.fbke{font-size:96px;animation:gb .4s cubic-bezier(.34,1.56,.64,1);}
+.fbkt{font-size:30px;font-weight:900;color:white;text-shadow:2px 2px 0 rgba(0,0,0,.3);animation:gb .4s .1s cubic-bezier(.34,1.56,.64,1) both;}
+@keyframes gb{from{transform:scale(0)}to{transform:scale(1)}}
+.okbg{background:rgba(110,201,110,.85);}.nobg{background:rgba(255,107,107,.75);}
+.cp{position:fixed;width:12px;height:12px;border-radius:2px;pointer-events:none;animation:cf linear forwards;z-index:1000;}
+@keyframes cf{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+#finish{justify-content:center;text-align:center;gap:18px;}
+.fstar{font-size:76px;animation:float 2s ease-in-out infinite;}
+.ftitle{font-size:clamp(26px,7vw,46px);font-weight:900;color:var(--dark);text-shadow:3px 3px 0 var(--sun);}
+.fscore{font-size:clamp(15px,3.5vw,22px);font-weight:700;color:#2A6FBB;}
+.fstars{display:flex;gap:6px;justify-content:center;font-size:48px;}
+.bbig{background:linear-gradient(135deg,var(--sun),#FFC200);border:none;border-radius:100px;padding:16px 38px;font-size:clamp(17px,3.8vw,22px);font-weight:900;color:var(--dark);cursor:pointer;box-shadow:0 6px 0 rgba(0,0,0,.15);transition:all .15s;font-family:inherit;}
+.bbig:hover{transform:translateY(-3px);} .bbig:active{transform:translateY(2px);}
+.npc{position:fixed;bottom:18px;right:18px;display:flex;flex-direction:row-reverse;align-items:flex-end;gap:9px;z-index:50;pointer-events:none;transition:all .4s;opacity:0;}
+.npc.on{opacity:1;}.nav{font-size:50px;animation:float 3s ease-in-out infinite;}
+.npt{background:white;border-radius:18px 18px 3px 18px;padding:10px 14px;font-size:13px;font-weight:700;color:var(--dark);max-width:190px;box-shadow:0 4px 14px rgba(0,0,0,.12);border:2px solid var(--sky);line-height:1.4;}
+@media(max-width:460px){.rshape{width:86px;height:86px;font-size:48px;}.ropt{width:82px;height:82px;font-size:42px;}.sopt{width:72px;height:72px;font-size:40px;}.tbox{width:98px;height:98px;font-size:54px;}}
+</style>
+</head>
+<body>
+<div class="cloud c1"></div><div class="cloud c2"></div>
+
+<div id="home" class="screen active">
+  <span class="mascot">🦄</span>
+  <div class="title">小星星<br>空间探险</div>
+  <div class="sub">和独角兽一起玩转形状！🌈</div>
+  <div class="cards">
+    <div class="card a3" onclick="start('shape',3)"><span class="ce">🌸</span><div class="cl">3岁</div><div class="cd">找形状</div></div>
+    <div class="card a4" onclick="start('rotation',4)"><span class="ce">🌀</span><div class="cl">4岁</div><div class="cd">转一转</div></div>
+    <div class="card a5" onclick="start('position',5)"><span class="ce">🗺️</span><div class="cl">5岁</div><div class="cd">在哪里</div></div>
+    <div class="card a6" onclick="start('compose',6)"><span class="ce">🏗️</span><div class="cl">6岁</div><div class="cd">拼图形</div></div>
+  </div>
+  <p style="font-size:13px;color:#888;font-weight:700;margin-top:6px">👆 选择宝宝的年龄开始游戏</p>
+</div>
+
+<div id="game" class="screen">
+  <div class="topbar">
+    <button class="btn-home" onclick="goHome()">🏠</button>
+    <div class="sbar">⭐ <span id="sn">0</span></div>
+    <div class="progwrap"><div class="progfill" id="pf" style="width:0%"></div></div>
+    <button class="btn-hint" onclick="hint()">💡 提示</button>
+  </div>
+  <div class="garea" id="ga"></div>
+</div>
+
+<div id="finish" class="screen">
+  <div class="fstar">🏆</div>
+  <div class="ftitle">太棒了！</div>
+  <div id="fst" class="fstars">⭐⭐⭐</div>
+  <div id="fsc" class="fscore"></div>
+  <button class="bbig" onclick="goHome()">🏠 再玩一次</button>
+</div>
+
+<div class="fbk" id="fb"><div class="fbke" id="fe">🎉</div><div class="fbkt" id="ft">太棒了！</div></div>
+<div class="npc" id="npc"><div class="nav">🦄</div><div class="npt" id="nt"></div></div>
+
+<script>
+let S={m:'shape',age:3,score:0,round:0,total:6,ans:null,wrong:0,hint:null};
+
+const NM={
+  start:['哇，你来啦！一起玩吧！🎉','加油，我相信你！💪','来挑战吧！✨'],
+  ok:['太厉害了！你真聪明！🌟','答对了！你最棒！🎊','哇，太对了！⭐','你真厉害！🦄'],
+  no:['再试一次，你可以！💙','没关系，仔细看看！🔍','慢慢来，不着急！🌸'],
+  hi:['仔细观察每个形状！👆','来，我帮帮你！🤫','慢慢来，不着急！🌸'],
+};
+
+let AC=null;
+function ga(){if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();return AC;}
+function tone(f,d,t='sine',v=.3){try{const c=ga(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type=t;o.frequency.value=f;g.gain.setValueAtTime(v,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+d);o.start(c.currentTime);o.stop(c.currentTime+d);}catch(e){}}
+function pok(){tone(523,.12);setTimeout(()=>tone(659,.12),120);setTimeout(()=>tone(784,.25),240);}
+function pno(){tone(260,.15,'sawtooth',.2);}
+function pck(){tone(440,.08,'sine',.15);}
+
+function confetti(){
+  const cs=['#FF6B6B','#FFD83D','#6EC6F5','#B07FE8','#6EC96E','#FF8DC7','#FF9D42'];
+  for(let i=0;i<28;i++){
+    const e=document.createElement('div');e.className='cp';
+    e.style.cssText=`left:${Math.random()*100}vw;top:-20px;background:${cs[~~(Math.random()*cs.length)]};animation-duration:${1.2+Math.random()}s;animation-delay:${Math.random()*.4}s;border-radius:${Math.random()>.5?'50%':'2px'};`;
+    document.body.appendChild(e);setTimeout(()=>e.remove(),2400);
+  }
+}
+
+let nT=null;
+function npc(type){
+  const m=NM[type]||NM.start,t=m[~~(Math.random()*m.length)],b=document.getElementById('npc'),n=document.getElementById('nt');
+  n.textContent=t;b.classList.add('on');clearTimeout(nT);nT=setTimeout(()=>b.classList.remove('on'),3500);
+}
+
+function feedback(ok,msg){
+  const o=document.getElementById('fb');
+  o.className='fbk on '+(ok?'okbg':'nobg');
+  document.getElementById('fe').textContent=ok?['🎉','🌟','🥳','✨','🎊'][~~(Math.random()*5)]:['💙','🌈','💪'][~~(Math.random()*3)];
+  document.getElementById('ft').textContent=msg;
+  setTimeout(()=>{o.className='fbk';},1400);
+}
+
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function goHome(){pck();document.getElementById('npc').classList.remove('on');showScreen('home');}
+
+function start(m,age){
+  pck();S={m,age,score:0,round:0,total:age<=3?5:age<=4?6:7,ans:null,wrong:0,hint:null};
+  showScreen('game');upd();setTimeout(()=>npc('start'),600);render();
+}
+function upd(){document.getElementById('pf').style.width=(S.round/S.total*100)+'%';document.getElementById('sn').textContent=S.score;}
+
+function render(){
+  if(S.round>=S.total){finish();return;}
+  S.wrong=0;S.hint=null;
+  const a=document.getElementById('ga');
+  if(S.m==='shape')rShape(a);
+  else if(S.m==='rotation')rRot(a);
+  else if(S.m==='position')rPos(a);
+  else rComp(a);
+}
+
+// SHAPE
+const SP=[
+  {e:'🔴',g:'圆形'},{e:'🔵',g:'圆形'},{e:'🟡',g:'圆形'},{e:'🟣',g:'圆形'},
+  {e:'🟥',g:'方形'},{e:'🟦',g:'方形'},{e:'🟩',g:'方形'},{e:'⬛',g:'方形'},
+  {e:'🔺',g:'三角'},{e:'🔻',g:'三角'},
+  {e:'🌟',g:'星形'},{e:'⭐',g:'星形'},
+  {e:'❤️',g:'心形'},{e:'🩷',g:'心形'},
+];
+function rShape(a){
+  const p=shuffle([...SP]),tg=p[0];
+  const same=p.filter(s=>s.g===tg.g&&s.e!==tg.e);
+  const diff=shuffle(p.filter(s=>s.g!==tg.g));
+  const opts=shuffle([tg,...same.slice(0,1),...diff.slice(0,2)]);
+  S.ans=tg.e;
+  a.innerHTML=`<div class="tlabel">🎯 找出和这个一样的形状！</div>
+  <div class="szone">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+      <div style="font-size:13px;font-weight:700;color:#aaa">这是 → <b>${tg.g}</b></div>
+      <div class="tbox" id="tb">${tg.e}</div>
+    </div>
+    <div class="srow">${opts.map(o=>`<div class="sopt" onclick="ckShape('${o.e}','${tg.e}')">${o.e}</div>`).join('')}</div>
+  </div>`;
+}
+function ckShape(c,r){
+  pck();
+  if(c===r){
+    pok();confetti();feedback(true,['太棒了！🌟','答对啦！🎉','你真聪明！✨'][~~(Math.random()*3)]);npc('ok');
+    document.getElementById('tb').classList.add('ok');
+    S.score++;S.round++;upd();setTimeout(render,1500);
+  }else{
+    pno();S.wrong++;feedback(false,['再找找！💙','仔细看看！🔍','你可以的！💪'][~~(Math.random()*3)]);npc('no');
+    document.querySelectorAll('.sopt').forEach(el=>{if(el.textContent.trim()===c){el.classList.add('bad');setTimeout(()=>el.classList.remove('bad'),500);}});
+    if(S.wrong>=2)hint();
+  }
+}
+
+// ROTATION
+const RE=['🚀','🦋','🐢','🏠','🦊','🐸','🎯','🌈','🎁','🦁'];
+const RA=[0,45,90,135,180];
+function rRot(a){
+  const em=RE[S.round%RE.length],tg=RA[~~(Math.random()*RA.length)];
+  const wr=shuffle(RA.filter(x=>x!==tg));
+  const opts=shuffle([tg,...wr.slice(0,2)]);
+  S.ans=tg;
+  a.innerHTML=`<div class="tlabel">🌀 哪个旋转角度和右边一样？</div>
+  <div class="rzone">
+    <div class="rdemo">
+      <div class="rbox"><div class="rlbl">原来</div><div class="rshape">${em}</div></div>
+      <div class="rarr">→</div>
+      <div class="rbox"><div class="rlbl">变成这样 ✨</div><div class="rshape rtarget" id="rtg" style="transform:rotate(${tg}deg)">${em}</div></div>
+    </div>
+    <div class="tlabel" style="font-size:14px;color:#888">选出旋转了 ${tg}° 的那个 👇</div>
+    <div class="rchoices">
+      ${opts.map(ag=>`<div class="ropt" onclick="ckRot(${ag},${tg})"><span style="transform:rotate(${ag}deg);font-size:50px">${em}</span><div class="adeg">${ag}°</div></div>`).join('')}
+    </div>
+  </div>`;
+}
+function ckRot(c,r){
+  pck();
+  if(c===r){
+    pok();confetti();feedback(true,['旋转达人！🌀','转对了！🎉','太厉害了！✨'][~~(Math.random()*3)]);npc('ok');
+    S.score++;S.round++;upd();setTimeout(render,1500);
+  }else{
+    pno();S.wrong++;feedback(false,['再看看角度！🔍','多了还是少了？💙','仔细想想！💪'][~~(Math.random()*3)]);npc('no');
+    document.querySelectorAll('.ropt').forEach(el=>{const b=el.querySelector('.adeg');if(b&&parseInt(b.textContent)===c){el.classList.add('bad');setTimeout(()=>el.classList.remove('bad'),500);}});
+    if(S.wrong>=2)hint();
+  }
+}
+
+// POSITION
+const PW=[
+  {t:'上面',i:'⬆️',s:'top:10%;left:50%;transform:translateX(-50%)'},
+  {t:'下面',i:'⬇️',s:'top:62%;left:50%;transform:translateX(-50%)'},
+  {t:'左边',i:'⬅️',s:'top:38%;left:10%'},
+  {t:'右边',i:'➡️',s:'top:38%;left:68%'},
+  {t:'中间',i:'🎯',s:'top:35%;left:50%;transform:translateX(-50%)'},
+];
+const PS=[{o:'🐱',q:'小猫在哪里？'},{o:'🐦',q:'小鸟在哪里？'},{o:'🌸',q:'花朵在哪里？'},{o:'⭐',q:'星星在哪里？'},{o:'🐸',q:'青蛙跳到哪里？'},{o:'🎈',q:'气球飘到哪里？'},{o:'🐝',q:'小蜜蜂在哪里？'}];
+function rPos(a){
+  const sc=PS[S.round%PS.length],cor=PW[~~(Math.random()*PW.length)];
+  const wr=shuffle(PW.filter(p=>p.t!==cor.t));
+  const ch=shuffle([cor,...wr.slice(0,4)]);
+  S.ans=cor.t;
+  a.innerHTML=`<div class="tlabel">🗺️ ${sc.q}</div>
+  <div class="pzone">
+    <div class="pscene">
+      <div style="position:absolute;font-size:36px;bottom:6px;right:10px">🌳</div>
+      <div class="pobj" style="${cor.s}">${sc.o}</div>
+    </div>
+    <div class="pgrid">
+      ${ch.map(c=>`<button class="pbtn" onclick="ckPos('${c.t}','${cor.t}')"><span class="pi">${c.i}</span>${c.t}</button>`).join('')}
+    </div>
+  </div>`;
+}
+function ckPos(c,r){
+  pck();
+  if(c===r){
+    pok();confetti();feedback(true,['位置达人！🗺️','找到了！🎉','你真棒！✨'][~~(Math.random()*3)]);npc('ok');
+    S.score++;S.round++;upd();setTimeout(render,1500);
+  }else{
+    pno();S.wrong++;feedback(false,['再看看！💙','上下左右想一想！🔍','你可以的！💪'][~~(Math.random()*3)]);npc('no');
+    document.querySelectorAll('.pbtn').forEach(btn=>{if(btn.textContent.includes(c)&&!btn.textContent.includes(r)){btn.classList.add('bad');setTimeout(()=>btn.classList.remove('bad'),500);}});
+    if(S.wrong>=2)hint();
+  }
+}
+
+// COMPOSE
+const CI=[
+  {p:['🔴','🔵'],r:'👀',q:'两个圆圆合在一起变成什么？',h:'眼睛有两个圆'},
+  {p:['🔺','🟩'],r:'🏠',q:'三角形加方形变成什么？',h:'三角屋顶+方形墙'},
+  {p:['🔴','🔺'],r:'🍦',q:'圆形加三角形是什么美食？',h:'夏天最爱吃的'},
+  {p:['🟩','🟩','🟩'],r:'🌳',q:'很多绿色拼在一起是什么？',h:'公园里高高的'},
+  {p:['⭐','⭐','⭐'],r:'🌌',q:'许多星星在夜空是什么？',h:'晚上抬头看到的'},
+  {p:['🌙','⭐'],r:'🌃',q:'月亮加星星是什么场景？',h:'夜晚城市的样子'},
+  {p:['🔵','🔵','🔵'],r:'🌊',q:'许多蓝色波浪合在一起是什么？',h:'大海的样子'},
+];
+const DC=['🚗','🐶','🎁','🎈','🌸','🎵','🍕','🎀','🦊','🎪','🚂','🦁'];
+function rComp(a){
+  const item=CI[S.round%CI.length];
+  const d=shuffle([...DC]);
+  const ch=shuffle([item.r,d[0],d[1],d[2]]);
+  S.ans=item.r;S.hint=item.h;
+  a.innerHTML=`<div class="tlabel">🏗️ ${item.q}</div>
+  <div class="szone">
+    <div style="display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#FFF9E6,#FFFBE8);padding:12px 18px;border-radius:18px;border:3px solid var(--sun);flex-wrap:wrap;justify-content:center">
+      ${item.p.map((p,i)=>`<span style="font-size:42px">${p}</span>${i<item.p.length-1?'<span style="font-size:20px;color:#ccc">+</span>':''}`).join('')}
+      <span style="font-size:20px;color:#ccc">= ❓</span>
+    </div>
+    <div class="srow" id="cch">
+      ${ch.map(c=>`<div class="sopt" style="font-size:44px" onclick="ckComp('${c}','${item.r}')">${c}</div>`).join('')}
+    </div>
+  </div>`;
+}
+function ckComp(c,r){
+  pck();
+  if(c===r){
+    pok();confetti();feedback(true,['形状大师！🏗️','拼对了！🎉','想象力真棒！✨'][~~(Math.random()*3)]);npc('ok');
+    S.score++;S.round++;upd();setTimeout(render,1500);
+  }else{
+    pno();S.wrong++;
+    const hs=['想想这些形状像什么！💙','再想想！🔍','提示：'+S.hint];
+    feedback(false,hs[Math.min(S.wrong-1,2)]);npc('no');
+    document.querySelectorAll('#cch .sopt').forEach(el=>{if(el.textContent.trim()===c){el.classList.add('bad');setTimeout(()=>el.classList.remove('bad'),500);}});
+    if(S.wrong>=2)hint();
+  }
+}
+
+function hint(){
+  pck();npc('hi');
+  if(S.m==='shape'){const t=document.getElementById('tb');if(t){t.classList.add('hi');setTimeout(()=>t.classList.remove('hi'),2200);}}
+  else if(S.m==='rotation'){const t=document.getElementById('rtg');if(t){t.style.transform=`rotate(${S.ans}deg) scale(1.2)`;setTimeout(()=>t.style.transform=`rotate(${S.ans}deg)`,1500);}}
+  else if(S.m==='position'){document.querySelectorAll('.pobj').forEach(el=>{el.style.fontSize='62px';setTimeout(()=>el.style.fontSize='40px',1500);});}
+  else{document.querySelectorAll('#cch .sopt').forEach(el=>{if(el.textContent.trim()===S.ans){el.style.border='4px solid var(--grass)';el.style.background='#E8FFE8';}});setTimeout(()=>{document.querySelectorAll('#cch .sopt').forEach(el=>{el.style.border='';el.style.background='';});},2000);}
+}
+
+function finish(){
+  showScreen('finish');confetti();confetti();pok();
+  setTimeout(()=>{tone(880,.3);setTimeout(()=>tone(1100,.4),300);},500);
+  const t=S.total,stars=S.score>=t?3:S.score>=Math.floor(t*.6)?2:1;
+  document.getElementById('fst').textContent='⭐'.repeat(stars)+'☆'.repeat(3-stars);
+  document.getElementById('fsc').textContent=`得了 ${S.score} 颗星！共 ${t} 道题`;
+  npc('ok');
+}
+
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=~~(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+</script>
+</body>
+</html>
