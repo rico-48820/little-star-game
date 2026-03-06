@@ -1,630 +1,1464 @@
 <!DOCTYPE html>
+
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>小星星空间探险</title>
-<meta name="description" content="小星星空间探险：为幼儿园阶段孩子设计的空间能力成长游戏，分四大模块，包含找形状、旋转、位置判断和形状拼合，游戏结束生成八卦图推测孩子能力。">
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>互联网实习生模拟器</title>
 <style>
-:root{
-  --sky:#6EC6F5;--sun:#FFD83D;--grass:#6EC96E;--pink:#FF8DC7;--purple:#B07FE8;
-  --red:#FF6B6B;--dark:#2E3A5C;--card-shadow:#e0f0ff;
-}
-*{box-sizing:border-box;margin:0;padding:0;}
-body{
-  font-family:'Baloo 2','Nunito','PingFang SC','Microsoft YaHei',sans-serif;
-  background:radial-gradient(circle at top,#b5e5ff 0%,#87CEEB 35%,#C8F5C8 100%);
-  min-height:100vh;overflow-x:hidden;user-select:none;color:var(--dark);
-}
-.cloud{position:fixed;background:white;border-radius:50px;opacity:.85;pointer-events:none;animation:drift linear infinite;}
-.cloud::before,.cloud::after{content:'';position:absolute;background:white;border-radius:50%;}
-.c1{width:120px;height:40px;top:8%;left:-140px;animation-duration:28s;}
-.c1::before{width:70px;height:60px;top:-28px;left:15px;}
-.c1::after{width:55px;height:50px;top:-20px;left:45px;}
-.c2{width:90px;height:30px;top:18%;left:-110px;animation-duration:22s;animation-delay:-10s;}
-.c2::before{width:50px;height:45px;top:-22px;left:10px;}
-.c2::after{width:40px;height:38px;top:-16px;left:32px;}
-@keyframes drift{from{left:-200px}to{left:calc(100vw + 200px)}}
-.screen{display:none;min-height:100vh;padding:20px;}
-.screen.active{display:flex;flex-direction:column;align-items:center;}
-#home{justify-content:center;text-align:center;}
-.mascot-wrap{
-  width:140px;height:140px;border-radius:50%;
-  background:radial-gradient(circle at 30% 20%,#fff,#ffeaa7);
-  box-shadow:0 10px 0 rgba(0,0,0,.12),0 0 18px rgba(255,255,255,.8);
-  display:flex;align-items:center;justify-content:center;
-  margin-bottom:18px;border:6px solid #fff;
-}
-.mascot{font-size:clamp(80px,16vw,110px);animation:float 3s ease-in-out infinite;display:block;}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
-.title{
-  font-size:clamp(34px,8vw,56px);font-weight:900;color:var(--dark);
-  text-shadow:0 3px 0 #fff,0 6px 0 rgba(0,0,0,.15);
-  line-height:1.1;margin-bottom:4px;animation:bi .8s cubic-bezier(.68,-.55,.265,1.55);
-}
-@keyframes bi{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
-.sub{font-size:clamp(15px,3.5vw,18px);color:#2A6FBB;font-weight:700;margin-bottom:26px;}
-.cards{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;max-width:720px;margin-bottom:16px;}
-.card{
-  background:linear-gradient(145deg,#ffffff,#f6fbff);
-  border-radius:22px;padding:18px 20px;width:160px;cursor:pointer;
-  border:3px solid rgba(255,255,255,.9);
-  transition:all .2s;
-  box-shadow:0 8px 0 rgba(0,0,0,.12),0 0 16px var(--card-shadow);
-  text-align:left;position:relative;overflow:hidden;
-}
-.card::after{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,rgba(255,255,255,.9),transparent 40%);
-  mix-blend-mode:screen;opacity:.7;pointer-events:none;
-}
-.card:hover{transform:translateY(-4px) scale(1.03);}
-.card:active{transform:translateY(2px);box-shadow:0 3px 0 rgba(0,0,0,.12);}
-.card.m1{border-color:var(--pink);}
-.card.m2{border-color:var(--sun);}
-.card.m3{border-color:var(--sky);}
-.card.m4{border-color:var(--purple);}
-.card .ce{font-size:32px;display:block;margin-bottom:2px;}
-.card .cl{font-size:18px;font-weight:900;color:var(--dark);}
-.card .cd{font-size:12px;color:#555;margin-top:4px;font-weight:600;line-height:1.35;}
-.tag-age{
-  position:absolute;right:10px;top:10px;
-  font-size:11px;background:rgba(0,0,0,.05);
-  padding:3px 7px;border-radius:999px;font-weight:600;
-}
-#game{justify-content:flex-start;padding:16px;}
-.topbar{
-  width:100%;max-width:720px;display:flex;align-items:center;gap:10px;
-  margin-bottom:14px;flex-wrap:wrap;
-}
-.btn-home{
-  background:linear-gradient(145deg,#ffffff,#f7f7f7);
-  border:3px solid var(--dark);border-radius:50%;width:50px;height:50px;
-  font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;
-  box-shadow:0 4px 0 rgba(0,0,0,.15);flex-shrink:0;transition:all .15s;font-family:inherit;
-}
-.btn-home:active{transform:translateY(2px);}
-.sbar{
-  background:white;border-radius:18px;padding:7px 12px;
-  font-size:14px;font-weight:900;color:var(--dark);
-  border:3px solid var(--sun);box-shadow:0 3px 0 rgba(0,0,0,.1);
-  display:flex;align-items:center;gap:6px;min-width:110px;
-}
-.sbar b{color:#e67e22;}
-.mod-label{font-size:13px;font-weight:800;color:#555;}
-.progwrap{flex:1;min-width:120px;background:rgba(255,255,255,.7);border-radius:20px;height:16px;overflow:hidden;border:2px solid white;}
-.progfill{height:100%;background:linear-gradient(90deg,var(--sky),var(--purple));border-radius:20px;transition:width .4s ease;}
-.btn-hint{
-  background:linear-gradient(145deg,#8A5CD0,#C49BFF);
-  border:none;border-radius:100px;padding:9px 18px;font-size:13px;font-weight:900;
-  color:white;cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,.15);font-family:inherit;transition:all .15s;white-space:nowrap;
-}
-.btn-hint:hover{transform:translateY(-2px);}
-.garea{
-  width:100%;max-width:720px;background:white;border-radius:30px;padding:22px;
-  box-shadow:0 8px 0 rgba(0,0,0,.1);flex:1;
-}
-.tlabel{font-size:clamp(16px,3.8vw,21px);font-weight:900;color:var(--dark);text-align:center;margin-bottom:18px;line-height:1.4;}
-.szone{display:flex;flex-direction:column;align-items:center;gap:22px;}
-.tbox{width:116px;height:116px;border:5px dashed #ccc;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:66px;transition:all .3s;}
-.tbox.hi{border-color:var(--sun);background:#FFFBE6;transform:scale(1.08);}
-.tbox.ok{border-color:var(--grass);background:#E8FFE8;animation:pop .3s;}
-@keyframes pop{50%{transform:scale(1.2)}}
-.srow{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;}
-.sopt{
-  width:86px;height:86px;border-radius:18px;display:flex;align-items:center;justify-content:center;
-  font-size:48px;cursor:pointer;border:4px solid #e0e0e0;background:white;
-  transition:all .15s;box-shadow:0 5px 0 rgba(0,0,0,.1);
-}
-.sopt:hover{transform:translateY(-3px) scale(1.05);border-color:var(--sky);}
-.sopt:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.1);}
-.sopt.bad{animation:shake .4s;border-color:var(--red);background:#FFF0F0;}
-@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}60%{transform:translateX(8px)}80%{transform:translateX(-4px)}}
-.rzone{display:flex;flex-direction:column;align-items:center;gap:18px;}
-.rdemo{display:flex;align-items:center;justify-content:center;gap:22px;flex-wrap:wrap;}
-.rbox{display:flex;flex-direction:column;align-items:center;gap:7px;}
-.rlbl{font-size:12px;font-weight:700;color:#aaa;}
-.rshape{width:108px;height:108px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:60px;border:4px solid #e0e0e0;background:linear-gradient(135deg,#f8f8ff,#fffef8);}
-.rtarget{border-color:var(--sun);background:linear-gradient(135deg,#FFFBE6,#FFF9D0);}
-.rarr{font-size:30px;color:#ccc;animation:pa 1.5s ease-in-out infinite;}
-@keyframes pa{0%,100%{opacity:.5}50%{opacity:1}}
-.rchoices{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;}
-.ropt{
-  width:96px;height:96px;border-radius:20px;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;font-size:50px;cursor:pointer;
-  border:4px solid #e0e0e0;background:white;transition:all .15s;
-  box-shadow:0 5px 0 rgba(0,0,0,.1);gap:2px;
-}
-.ropt:hover{transform:translateY(-3px);border-color:var(--purple);}
-.ropt:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.1);}
-.ropt.bad{animation:shake .4s;border-color:var(--red);}
-.adeg{font-size:11px;font-weight:900;color:#aaa;}
-.pzone{display:flex;flex-direction:column;align-items:center;gap:14px;}
-.pscene{
-  background:linear-gradient(180deg,#87CEEB 0%,#87CEEB 60%,#90EE90 60%,#90EE90 100%);
-  border-radius:18px;width:274px;height:176px;position:relative;border:4px solid #ddd;overflow:hidden;
-}
-.pobj{position:absolute;font-size:40px;transition:all .4s cubic-bezier(.34,1.56,.64,1);}
-.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:350px;}
-.pbtn{
-  background:white;border:3px solid #e0e0e0;border-radius:16px;padding:12px 6px;font-size:13px;
-  font-weight:900;cursor:pointer;color:var(--dark);box-shadow:0 4px 0 rgba(0,0,0,.1);
-  transition:all .15s;text-align:center;font-family:inherit;
-}
-.pbtn:hover{transform:translateY(-2px);border-color:var(--sky);background:#EEF8FF;}
-.pbtn:active{transform:translateY(2px);}
-.pbtn.bad{animation:shake .4s;border-color:var(--red);background:#FFF0F0;}
-.pi{font-size:20px;display:block;margin-bottom:1px;}
-.fbk{
-  display:none;position:fixed;inset:0;z-index:999;align-items:center;justify-content:center;
-  flex-direction:column;gap:14px;pointer-events:none;
-}
-.fbk.on{display:flex;animation:fo 1.5s forwards;}
-@keyframes fo{0%{opacity:1}70%{opacity:1}100%{opacity:0}}
-.fbke{font-size:96px;animation:gb .4s cubic-bezier(.34,1.56,.64,1);}
-.fbkt{font-size:26px;font-weight:900;color:white;text-shadow:2px 2px 0 rgba(0,0,0,.3);animation:gb .4s .1s cubic-bezier(.34,1.56,.64,1) both;}
-@keyframes gb{from{transform:scale(0)}to{transform:scale(1)}}
-.okbg{background:rgba(110,201,110,.85);}.nobg{background:rgba(255,107,107,.75);}
-.cp{position:fixed;width:12px;height:12px;border-radius:3px;pointer-events:none;animation:cf linear forwards;z-index:1000;}
-@keyframes cf{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
-#finish{justify-content:center;text-align:center;gap:16px;padding-bottom:40px;}
-.fstar{font-size:76px;animation:float 2s ease-in-out infinite;}
-.ftitle{font-size:clamp(26px,7vw,40px);font-weight:900;color:var(--dark);text-shadow:0 3px 0 #fff,0 6px 0 var(--sun);}
-.fscore{font-size:clamp(14px,3.5vw,18px);font-weight:700;color:#2A6FBB;}
-.fstars{display:flex;gap:6px;justify-content:center;font-size:40px;}
-.bbig{
-  background:linear-gradient(135deg,var(--sun),#FFC200);
-  border:none;border-radius:100px;padding:12px 30px;font-size:clamp(16px,3.8vw,20px);
-  font-weight:900;color:var(--dark);cursor:pointer;box-shadow:0 6px 0 rgba(0,0,0,.15);
-  transition:all .15s;font-family:inherit;margin-top:4px;
-}
-.bbig:hover{transform:translateY(-3px);} .bbig:active{transform:translateY(2px);}
-.npc{
-  position:fixed;bottom:18px;right:18px;display:flex;flex-direction:row-reverse;align-items:flex-end;
-  gap:9px;z-index:50;pointer-events:none;transition:all .4s;opacity:0;
-}
-.npc.on{opacity:1;}
-.nav{font-size:46px;animation:float 3s ease-in-out infinite;}
-.npt{
-  background:white;border-radius:18px 18px 3px 18px;padding:10px 14px;font-size:13px;
-  font-weight:700;color:var(--dark);max-width:190px;box-shadow:0 4px 14px rgba(0,0,0,.12);
-  border:2px solid var(--sky);line-height:1.4;
-}
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700;900&family=Syne:wght@700;800;900&display=swap');
 
-/* 八卦图 */
-.bagua-wrap{
-  margin-top:10px;display:flex;flex-direction:column;align-items:center;gap:10px;
+:root {
+–bg:#07090f; –s1:#0d0f1a; –s2:#131524; –s3:#1a1d2e; –s4:#21253a;
+–border:rgba(255,255,255,.055); –border2:rgba(255,255,255,.1);
+–ink:#dde2f5; –ink2:#a8b0d0; –muted:#5a607e; –faint:#252840;
+–gold:#f0b429; –rose:#f06292; –teal:#2dd4bf; –sky:#60a5fa;
+–lav:#a78bfa; –lime:#a3e635; –coral:#fb7185; –orange:#fb923c;
+–hp-c:#f87171; –en-c:#fbbf24; –rep-c:#34d399;
+–str-c:#c084fc; –sk-c:#60a5fa; –mo-c:#a3e635;
 }
-.bagua{
-  position:relative;width:250px;height:250px;border-radius:50%;
-  background:radial-gradient(circle,#fff 0%,#f9fcff 45%,#e3f2ff 70%,#d0e3ff 100%);
-  box-shadow:0 8px 0 rgba(0,0,0,.08),0 0 18px rgba(255,255,255,.9);
-  border:4px solid #fff;
-}
-.b-center{
-  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
-  width:110px;height:110px;border-radius:50%;
-  background:radial-gradient(circle,#ffeaa7,#ffc857);
-  box-shadow:0 4px 0 rgba(0,0,0,.12);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  font-size:13px;font-weight:800;color:#5b4000;padding:8px;
-}
-.b-center span{display:block;}
-.b-item{
-  position:absolute;width:70px;height:70px;border-radius:50%;
-  background:linear-gradient(145deg,#ffffff,#f3f7ff);
-  box-shadow:0 4px 0 rgba(0,0,0,.12);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  font-size:11px;font-weight:700;color:#34495e;padding:4px;
-}
-.b-item strong{font-size:14px;color:#2c3e50;}
-@media(max-width:460px){
-  .rshape{width:86px;height:86px;font-size:48px;}
-  .ropt{width:82px;height:82px;font-size:42px;}
-  .sopt{width:72px;height:72px;font-size:40px;}
-  .tbox{width:98px;height:98px;font-size:54px;}
-  .bagua{transform:scale(.9);}
-}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(–bg);color:var(–ink);font-family:‘Noto Sans SC’,sans-serif;position:relative;}
+
+/* noise */
+body::after{content:’’;position:fixed;inset:0;
+background-image:url(“data:image/svg+xml,%3Csvg xmlns=‘http://www.w3.org/2000/svg’ width=‘250’ height=‘250’%3E%3Cfilter id=‘n’%3E%3CfeTurbulence type=‘fractalNoise’ baseFrequency=‘0.9’ numOctaves=‘4’ stitchTiles=‘stitch’/%3E%3C/filter%3E%3Crect width=‘250’ height=‘250’ filter=‘url(%23n)’ opacity=‘0.032’/%3E%3C/svg%3E”);
+pointer-events:none;z-index:9999;}
+
+/* CineBG */
+#cbg{position:fixed;inset:0;z-index:0;transition:background 1.2s ease;}
+#cbg .vig{position:absolute;inset:0;background:radial-gradient(ellipse 70% 70% at 50% 50%,transparent 25%,rgba(7,9,15,.93) 100%);}
+#cbg .scan{position:absolute;inset:0;opacity:.022;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.9) 2px,rgba(0,0,0,.9) 4px);}
+
+/* Particles */
+#pts{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden;}
+.pt{position:absolute;border-radius:50%;animation:pt-drift linear infinite;opacity:0;}
+@keyframes pt-drift{0%{transform:translateY(100vh) translateX(0) scale(0);opacity:0}10%{opacity:.5}90%{opacity:.25}100%{transform:translateY(-10vh) translateX(var(–dx)) scale(.4);opacity:0}}
+
+/* App */
+#app{position:relative;z-index:10;max-width:430px;margin:0 auto;height:100vh;display:flex;flex-direction:column;overflow:hidden;}
+.screen{display:none;flex-direction:column;flex:1;overflow:hidden;}
+.screen.active{display:flex;}
+
+/* ══ TITLE ══ */
+#s-title{align-items:center;justify-content:center;padding:32px 24px;
+background:radial-gradient(ellipse 80% 60% at 50% 38%,rgba(167,139,250,.07) 0%,transparent 70%);}
+.tl-kana{font-size:9px;letter-spacing:4px;color:var(–lav);opacity:.65;margin-bottom:28px;font-family:‘Syne’,sans-serif;text-transform:uppercase;}
+.tl-hero{font-size:88px;display:block;margin-bottom:16px;animation:hero 5s ease-in-out infinite;
+filter:drop-shadow(0 0 40px rgba(167,139,250,.35));}
+@keyframes hero{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-12px) rotate(2deg)}}
+.tl-h1{font-family:‘Syne’,sans-serif;font-size:36px;font-weight:900;text-align:center;line-height:1.1;margin-bottom:10px;
+background:linear-gradient(160deg,#fff 0%,var(–lav) 55%,var(–teal) 100%);
+-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.tl-sub{font-size:12px;color:var(–muted);text-align:center;line-height:1.9;margin-bottom:28px;}
+.tl-chips{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;margin-bottom:32px;}
+.tl-chip{font-size:10px;padding:4px 12px;border-radius:20px;border:1px solid var(–border2);color:var(–ink2);background:rgba(255,255,255,.03);}
+.btn-main{width:100%;padding:16px;background:linear-gradient(135deg,var(–lav),#6d28d9);border:none;border-radius:14px;
+color:#fff;font-size:15px;font-weight:700;font-family:‘Noto Sans SC’,sans-serif;letter-spacing:3px;
+cursor:pointer;transition:all .25s;box-shadow:0 6px 28px rgba(109,40,217,.32);}
+.btn-main:hover{transform:translateY(-3px);box-shadow:0 10px 36px rgba(109,40,217,.45);}
+.btn-main:active{transform:translateY(0);}
+.snd-btn{position:absolute;top:18px;right:18px;z-index:100;width:34px;height:34px;border-radius:50%;
+background:rgba(255,255,255,.06);border:1px solid var(–border2);cursor:pointer;
+display:flex;align-items:center;justify-content:center;font-size:15px;transition:all .2s;color:var(–ink2);}
+.snd-btn:hover{background:rgba(255,255,255,.1);}
+.snd-btn.off{opacity:.4;}
+
+/* ══ CHARACTER SELECT ══ */
+#s-char{flex-direction:column;flex:1;overflow:hidden;}
+.char-header{padding:16px 16px 10px;border-bottom:1px solid var(–border);background:rgba(13,15,26,.9);flex-shrink:0;}
+.ch-title{font-family:‘Syne’,sans-serif;font-size:16px;font-weight:800;margin-bottom:2px;}
+.ch-sub{font-size:11px;color:var(–muted);}
+.char-scroll{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;}
+.char-scroll::-webkit-scrollbar{width:2px;}
+.char-scroll::-webkit-scrollbar-thumb{background:var(–faint);}
+
+.char-card{background:var(–s1);border:2px solid var(–border);border-radius:18px;
+padding:14px 14px 12px;cursor:pointer;transition:all .22s;position:relative;overflow:hidden;}
+.char-card::before{content:’’;position:absolute;inset:0;background:var(–cc-grad);opacity:0;transition:opacity .3s;}
+.char-card:hover{transform:translateY(-2px);border-color:var(–cc-col);}
+.char-card:hover::before{opacity:1;}
+.char-card.selected{border-color:var(–cc-col);box-shadow:0 0 0 1px var(–cc-col),0 4px 20px rgba(0,0,0,.3);}
+.char-card.selected::before{opacity:1;}
+
+.cc-row1{display:flex;align-items:flex-start;gap:12px;margin-bottom:10px;}
+.cc-avatar{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;
+font-size:28px;flex-shrink:0;border:1px solid var(–border2);background:var(–s2);position:relative;z-index:1;}
+.cc-info{flex:1;position:relative;z-index:1;}
+.cc-name{font-size:15px;font-weight:700;margin-bottom:2px;display:flex;align-items:center;gap:7px;}
+.cc-badge{font-size:9px;padding:2px 8px;border-radius:20px;font-weight:700;border:1px solid;font-family:‘Syne’,sans-serif;}
+.cc-school{font-size:11px;color:var(–muted);margin-bottom:5px;}
+.cc-tags{display:flex;gap:5px;flex-wrap:wrap;}
+.cc-tag{font-size:10px;padding:2px 8px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid var(–border);color:var(–ink2);}
+
+.cc-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;position:relative;z-index:1;}
+.cc-stat{text-align:center;}
+.cc-stat-val{font-size:13px;font-weight:700;font-family:‘Syne’,sans-serif;}
+.cc-stat-label{font-size:9px;color:var(–muted);margin-top:1px;}
+.cc-stat-bar{height:2px;border-radius:1px;background:var(–faint);margin-top:3px;overflow:hidden;}
+.cc-stat-fill{height:100%;border-radius:1px;background:var(–cc-col);}
+
+.cc-perk{position:relative;z-index:1;margin-top:8px;padding:8px 10px;
+background:rgba(0,0,0,.2);border-radius:8px;border:1px solid var(–border);}
+.cc-perk-label{font-size:9px;color:var(–muted);margin-bottom:3px;letter-spacing:.5px;text-transform:uppercase;}
+.cc-perk-text{font-size:11px;color:var(–ink2);line-height:1.5;}
+.cc-perk-text b{color:var(–cc-col);}
+
+.char-confirm{padding:12px 14px;border-top:1px solid var(–border);background:rgba(13,15,26,.95);flex-shrink:0;}
+.btn-confirm{width:100%;padding:14px;background:linear-gradient(135deg,var(–lav),#6d28d9);border:none;border-radius:13px;
+color:#fff;font-size:14px;font-weight:700;font-family:‘Noto Sans SC’,sans-serif;letter-spacing:2px;
+cursor:pointer;transition:all .22s;box-shadow:0 4px 20px rgba(109,40,217,.28);}
+.btn-confirm:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(109,40,217,.4);}
+.btn-confirm:disabled{opacity:.3;cursor:not-allowed;transform:none;}
+
+/* ══ GAME ══ */
+#s-game{overflow:hidden;}
+.stats-bar{flex-shrink:0;background:rgba(13,15,26,.95);backdrop-filter:blur(16px);
+border-bottom:1px solid var(–border);padding:10px 14px 11px;}
+.sb-r1{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.sb-left{display:flex;align-items:center;gap:8px;}
+.sb-avatar{width:30px;height:30px;border-radius:9px;background:var(–s3);
+display:flex;align-items:center;justify-content:center;font-size:17px;border:1px solid var(–border2);}
+.sb-char{font-size:13px;font-weight:700;}
+.sb-phase{font-size:10px;color:var(–muted);}
+.sb-right{display:flex;align-items:center;gap:6px;}
+.sb-day-pill{background:var(–s3);border:1px solid var(–border2);border-radius:8px;
+padding:3px 10px;font-size:11px;color:var(–gold);font-weight:700;}
+.sb-dot{width:7px;height:7px;border-radius:50%;background:var(–lav);
+box-shadow:0 0 7px var(–lav);animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+
+.stats-row{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;}
+.sr-it{background:var(–s2);border-radius:8px;padding:5px 4px;border:1px solid var(–border);}
+.sr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;}
+.sr-ico{font-size:10px;} .sr-val{font-size:10px;font-weight:700;color:var(–c);}
+.sr-bar{height:3px;background:var(–faint);border-radius:2px;overflow:hidden;}
+.sr-fill{height:100%;border-radius:2px;background:var(–c);transition:width .7s cubic-bezier(.4,0,.2,1);box-shadow:0 0 4px var(–c);}
+.sr-nm{font-size:8px;color:var(–muted);margin-top:2px;text-align:center;}
+
+/* Progress track */
+.prog-track{display:flex;align-items:center;gap:2px;padding:7px 14px 6px;
+border-bottom:1px solid var(–border);background:rgba(13,15,26,.7);flex-shrink:0;}
+.pt-seg{flex:1;height:3px;border-radius:2px;background:var(–faint);transition:all .4s;position:relative;overflow:hidden;}
+.pt-seg.done{background:rgba(45,212,191,.45);}
+.pt-seg.active{background:var(–lav);box-shadow:0 0 5px var(–lav);}
+.pt-seg.active::after{content:’’;position:absolute;inset:0;
+background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);animation:shim 1.5s infinite;}
+@keyframes shim{0%{transform:translateX(-100%)}100%{transform:translateX(200%)}}
+
+/* Game scroll */
+.gs{flex:1;overflow-y:auto;overflow-x:hidden;padding-bottom:20px;}
+.gs::-webkit-scrollbar{width:2px;}
+.gs::-webkit-scrollbar-thumb{background:var(–faint);border-radius:2px;}
+
+/* ── Scene ── */
+.sc-wrap{padding:12px 12px 6px;}
+.sc-card{border-radius:20px;overflow:hidden;border:1px solid var(–border2);
+box-shadow:0 6px 32px rgba(0,0,0,.45);background:var(–s1);position:relative;}
+.sc-strip{height:3px;background:var(–strip,var(–lav));box-shadow:0 0 10px var(–strip,var(–lav));transition:background .6s,box-shadow .6s;}
+.sc-illus{position:relative;height:160px;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+.sc-ibg{position:absolute;inset:0;transition:opacity .8s;}
+.sc-ivig{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 35%,var(–s1) 100%);}
+.sc-em{position:relative;z-index:2;font-size:64px;line-height:1;
+filter:drop-shadow(0 4px 20px rgba(255,255,255,.1));animation:float 4s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.sc-fem{position:absolute;font-size:20px;opacity:.28;animation:fdrift var(–d,6s) ease-in-out infinite;animation-delay:var(–dl,0s);}
+@keyframes fdrift{0%,100%{transform:translate(0,0) rotate(0deg)}33%{transform:translate(var(–fx,8px),var(–fy,-6px)) rotate(5deg)}66%{transform:translate(calc(var(–fx,-8px)),var(–fy,6px)) rotate(-5deg)}}
+
+.sc-body{padding:0 16px 14px;}
+.sc-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.sc-pill{display:inline-flex;align-items:center;gap:4px;font-size:10px;
+border-radius:20px;padding:3px 10px;border:1px solid;transition:all .4s;}
+.sc-pill-dot{width:4px;height:4px;border-radius:50%;background:currentColor;box-shadow:0 0 4px currentColor;}
+.sc-time{font-size:10px;color:var(–muted);background:var(–s3);border:1px solid var(–border);border-radius:7px;padding:2px 9px;}
+.sc-title{font-family:‘Noto Serif SC’,serif;font-size:18px;font-weight:700;line-height:1.4;margin-bottom:8px;}
+.sc-desc{font-size:13px;color:var(–ink2);line-height:1.85;margin-bottom:8px;}
+.sc-desc .hl-g{color:var(–gold);font-weight:500;}
+.sc-desc .hl-t{color:var(–teal);font-weight:500;}
+.sc-desc .hl-r{color:var(–coral);font-weight:500;}
+.sc-desc .hl-s{color:var(–sky);font-weight:500;}
+.sc-desc .hl-l{color:var(–lav);font-weight:500;}
+.sc-alerts{display:flex;gap:5px;flex-wrap:wrap;margin-top:4px;}
+.sc-alert{font-size:10px;padding:2px 9px;border-radius:20px;border:1px solid;animation:al-pulse 2s infinite;}
+@keyframes al-pulse{0%,100%{opacity:1}50%{opacity:.6}}
+.al-d{color:var(–hp-c);border-color:rgba(248,113,113,.3);background:rgba(248,113,113,.07);}
+.al-w{color:var(–gold);border-color:rgba(240,180,41,.3);background:rgba(240,180,41,.07);}
+.al-g{color:var(–teal);border-color:rgba(45,212,191,.3);background:rgba(45,212,191,.07);}
+
+/* ── Choices ── */
+.ch-sec{padding:4px 12px 8px;}
+.ch-lbl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(–muted);margin-bottom:8px;text-align:center;}
+.ch-grid{display:flex;flex-direction:column;gap:7px;}
+.ch-grid.g2{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+
+.c-card{background:var(–s2);border:1px solid var(–border);border-radius:14px;
+padding:11px 12px;cursor:pointer;text-align:left;transition:all .2s cubic-bezier(.4,0,.2,1);
+position:relative;overflow:hidden;display:flex;flex-direction:column;gap:7px;}
+.c-card::after{content:’’;position:absolute;left:0;top:10px;bottom:10px;width:2px;
+border-radius:0 2px 2px 0;background:var(–cco,var(–lav));opacity:0;transition:opacity .2s;}
+.c-card:hover{transform:translateY(-2px) translateX(2px);border-color:var(–border2);}
+.c-card:hover::after{opacity:.6;}
+.c-card.sel{border-color:var(–cco,var(–lav));background:rgba(167,139,250,.06);}
+.c-card.sel::after{opacity:1;}
+.c-card.dim{opacity:.3;pointer-events:none;filter:grayscale(.4);}
+.c-head{display:flex;align-items:flex-start;gap:9px;}
+.c-ico{font-size:22px;flex-shrink:0;line-height:1.15;transition:transform .2s;}
+.c-card:hover .c-ico{transform:scale(1.15) rotate(5deg);}
+.c-txt{flex:1;font-size:12px;font-weight:500;line-height:1.5;color:var(–ink);}
+.c-tag{flex-shrink:0;font-size:9px;padding:2px 8px;border-radius:20px;font-weight:700;border:1px solid;font-family:‘Syne’,sans-serif;align-self:flex-start;}
+.t-safe{color:var(–teal);border-color:rgba(45,212,191,.35);background:rgba(45,212,191,.07);}
+.t-risk{color:var(–coral);border-color:rgba(251,113,133,.35);background:rgba(251,113,133,.07);}
+.t-wild{color:var(–gold);border-color:rgba(240,180,41,.35);background:rgba(240,180,41,.07);}
+.t-snk{color:var(–lav);border-color:rgba(167,139,250,.35);background:rgba(167,139,250,.07);}
+.t-cow{color:var(–sky);border-color:rgba(96,165,250,.35);background:rgba(96,165,250,.07);}
+.c-deltas{display:flex;gap:4px;flex-wrap:wrap;padding-left:31px;}
+.c-d{font-size:9px;padding:1px 7px;border-radius:20px;font-weight:700;border:1px solid;}
+.d-p{color:var(–teal);border-color:rgba(45,212,191,.2);background:rgba(45,212,191,.07);}
+.d-n{color:var(–coral);border-color:rgba(251,113,133,.2);background:rgba(251,113,133,.07);}
+.d-w{color:var(–gold);border-color:rgba(240,180,41,.2);background:rgba(240,180,41,.07);}
+
+/* ── Result ── */
+.res-wrap{margin:0 12px 8px;}
+.res-card{border-radius:16px;overflow:hidden;border:1px solid var(–border2);
+animation:res-in .38s cubic-bezier(.34,1.56,.64,1);}
+@keyframes res-in{from{opacity:0;transform:scale(.94) translateY(8px)}to{opacity:1;transform:none}}
+.res-top{padding:12px 14px;background:var(–s2);display:flex;align-items:flex-start;gap:10px;}
+.res-ico{font-size:28px;flex-shrink:0;}
+.res-body{flex:1;}
+.res-verdict{font-size:11px;font-weight:700;color:var(–ink2);margin-bottom:3px;letter-spacing:.5px;}
+.res-story{font-size:12px;color:var(–muted);line-height:1.7;}
+.res-chips{padding:8px 14px;background:var(–s3);display:flex;gap:5px;flex-wrap:wrap;border-top:1px solid var(–border);}
+.res-chip{font-size:10px;padding:3px 10px;border-radius:20px;font-weight:700;display:flex;align-items:center;gap:3px;}
+.rcp{background:rgba(45,212,191,.12);color:var(–teal);}
+.rcn{background:rgba(251,113,133,.12);color:var(–coral);}
+.rcw{background:rgba(240,180,41,.12);color:var(–gold);}
+.res-ripple{padding:8px 14px;border-top:1px solid var(–border);background:rgba(167,139,250,.05);
+font-size:11px;color:var(–lav);line-height:1.6;display:flex;gap:6px;}
+
+/* ── Next ── */
+.nxt-wrap{padding:4px 12px 10px;}
+.btn-nxt{width:100%;padding:13px;background:var(–s3);border:1px solid var(–border2);
+border-radius:12px;color:var(–ink);font-size:13px;font-weight:700;
+font-family:‘Noto Sans SC’,sans-serif;letter-spacing:1.5px;
+cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.btn-nxt:hover{background:var(–s4);border-color:rgba(167,139,250,.4);transform:translateY(-2px);}
+.btn-nxt:disabled{opacity:.22;cursor:not-allowed;transform:none;}
+.nxt-arr{transition:transform .2s;}
+.btn-nxt:hover .nxt-arr{transform:translateX(4px);}
+
+/* ── Summary ── */
+.sum-wrap{padding:12px;animation:res-in .45s cubic-bezier(.34,1.56,.64,1);}
+.sum-card{background:var(–s1);border:1px solid var(–border2);border-radius:20px;overflow:hidden;box-shadow:0 8px 36px rgba(0,0,0,.4);}
+.sum-hero{padding:24px 18px 18px;text-align:center;
+background:linear-gradient(160deg,var(–s2) 0%,var(–s1) 100%);
+border-bottom:1px solid var(–border);position:relative;overflow:hidden;}
+.sum-hero::before{content:’’;position:absolute;inset:0;
+background:radial-gradient(ellipse 60% 60% at 50% 40%,rgba(167,139,250,.07) 0%,transparent 70%);}
+.sum-em{font-size:48px;display:block;margin-bottom:10px;animation:float 4s infinite;position:relative;z-index:1;}
+.sum-title{font-family:‘Syne’,sans-serif;font-size:20px;font-weight:800;margin-bottom:3px;position:relative;z-index:1;}
+.sum-sub{font-size:11px;color:var(–muted);position:relative;z-index:1;}
+.sum-stats{padding:14px 16px;border-bottom:1px solid var(–border);}
+.sum-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;}
+.sum-row+.sum-row{border-top:1px solid var(–border);}
+.sum-l{display:flex;align-items:center;gap:7px;font-size:11px;color:var(–ink2);}
+.sum-bar{flex:1;height:3px;background:var(–faint);border-radius:2px;overflow:hidden;margin:0 10px;}
+.sum-bf{height:100%;border-radius:2px;transition:width .7s .2s cubic-bezier(.4,0,.2,1);}
+.sum-d{font-size:13px;font-weight:700;}
+.sum-note{padding:12px 16px;border-bottom:1px solid var(–border);}
+.sum-nt{font-size:12px;color:var(–muted);line-height:1.7;}
+.sum-nt b{color:var(–gold);}
+.sum-foot{padding:14px 16px;}
+.btn-nd{width:100%;padding:14px;background:linear-gradient(135deg,var(–lav),#6d28d9);
+border:none;border-radius:13px;color:#fff;font-size:14px;font-weight:700;
+font-family:‘Noto Sans SC’,sans-serif;letter-spacing:2px;cursor:pointer;transition:all .25s;
+box-shadow:0 5px 22px rgba(109,40,217,.28);}
+.btn-nd:hover{transform:translateY(-3px);box-shadow:0 9px 30px rgba(109,40,217,.42);}
+
+/* ── Random Event Overlay ── */
+#re-ov{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.82);backdrop-filter:blur(6px);
+display:none;align-items:center;justify-content:center;padding:20px;}
+#re-ov.show{display:flex;animation:fade-in .3s;}
+@keyframes fade-in{from{opacity:0}to{opacity:1}}
+.re-box{background:var(–s1);border:1px solid var(–border2);border-radius:22px;padding:22px;
+width:100%;max-width:390px;box-shadow:0 20px 60px rgba(0,0,0,.6);animation:pop-in .36s cubic-bezier(.34,1.56,.64,1);}
+@keyframes pop-in{from{opacity:0;transform:scale(.82)}to{opacity:1;transform:scale(1)}}
+.re-tag{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(–gold);
+display:inline-block;margin-bottom:10px;border:1px solid rgba(240,180,41,.3);
+border-radius:20px;padding:2px 10px;background:rgba(240,180,41,.07);}
+.re-em{font-size:48px;display:block;text-align:center;margin-bottom:10px;animation:float 3s infinite;}
+.re-title{font-family:‘Noto Serif SC’,serif;font-size:17px;font-weight:700;text-align:center;margin-bottom:5px;}
+.re-desc{font-size:12px;color:var(–muted);text-align:center;line-height:1.75;margin-bottom:16px;}
+.re-choices{display:flex;flex-direction:column;gap:7px;}
+
+/* ── Toast ── */
+#toast{position:fixed;top:14px;left:50%;transform:translateX(-50%) translateY(-80px);
+background:rgba(20,22,32,.96);border:1px solid var(–border2);backdrop-filter:blur(12px);
+border-radius:100px;padding:9px 18px;font-size:12px;font-weight:500;
+transition:transform .32s cubic-bezier(.4,0,.2,1);z-index:9000;white-space:nowrap;
+box-shadow:0 8px 30px rgba(0,0,0,.5);display:flex;align-items:center;gap:7px;}
+#toast.show{transform:translateX(-50%) translateY(0);}
+
+/* ── Ending ── */
+#s-end{align-items:center;justify-content:center;padding:36px 24px;text-align:center;
+background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(167,139,250,.07) 0%,transparent 70%);}
+.end-em{font-size:72px;display:block;margin-bottom:14px;animation:hero 5s infinite;}
+.end-title{font-family:‘Syne’,sans-serif;font-size:26px;font-weight:900;margin-bottom:7px;}
+.end-sub{font-size:12px;color:var(–muted);line-height:1.85;margin-bottom:24px;white-space:pre-line;}
+.end-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;width:100%;margin-bottom:24px;}
+.end-stat{background:var(–s1);border:1px solid var(–border);border-radius:13px;padding:12px;}
+.end-sl{font-size:10px;color:var(–muted);margin-bottom:3px;}
+.end-sv{font-size:20px;font-weight:700;font-family:‘Syne’,sans-serif;}
 </style>
+
 </head>
 <body>
-<div class="cloud c1"></div><div class="cloud c2"></div>
 
-<div id="home" class="screen active">
-  <div class="mascot-wrap"><span class="mascot">🐼</span></div>
-  <div class="title">小星星<br>空间探险</div>
-  <div class="sub">跟小太空熊猫一起闯关，发现空间小超人！</div>
-  <div class="cards">
-    <div class="card m1" onclick="startModule('starter')">
-      <span class="ce">✨</span>
-      <div class="cl">星星起步站</div>
-      <div class="cd">第一次接触空间小任务，轻松一关，看看孩子和图形做朋友的方式。</div>
-      <div class="tag-age">适合：托班/小小班</div>
-    </div>
-    <div class="card m2" onclick="startModule('explorer')">
-      <span class="ce">🧭</span>
-      <div class="cl">小小探路营</div>
-      <div class="cd">三关连玩，跟着小熊猫在空间里转一转、找一找，练习方向感和路径感。</div>
-      <div class="tag-age">适合：中班</div>
-    </div>
-    <div class="card m3" onclick="startModule('tower')">
-      <span class="ce">🏯</span>
-      <div class="cl">空间挑战塔</div>
-      <div class="cd">五层小塔，难度一层一层往上爬，考考空间想象和图形拼搭力。</div>
-      <div class="tag-age">适合：大班</div>
-    </div>
-    <div class="card m4" onclick="startModule('graduate')">
-      <span class="ce">🚀</span>
-      <div class="cl">宇宙升学舱</div>
-      <div class="cd">五关进阶任务，模拟幼升小前的专注力、规则感和综合空间能力。</div>
-      <div class="tag-age">适合：幼升小</div>
-    </div>
+<div id="cbg"><div class="vig"></div><div class="scan"></div></div>
+<div id="pts"></div>
+<div id="toast"></div>
+<div id="re-ov"></div>
+
+<div id="app">
+
+<!-- ══ TITLE ══ -->
+
+<div id="s-title" class="screen active">
+  <button class="snd-btn" id="snd-btn" onclick="toggleSnd()">🔊</button>
+  <div class="tl-kana">Internet Internship Simulator · 2026</div>
+  <span class="tl-hero">💼</span>
+  <div class="tl-h1">互联网<br>实习生模拟器</div>
+  <div class="tl-sub">从投简历到互联网大厂实习<br>每个决策都会影响你的职场命运</div>
+  <div class="tl-chips">
+    <div class="tl-chip">🏢 聚焦互联网赛道</div>
+    <div class="tl-chip">👤 6种人设可选</div>
+    <div class="tl-chip">⚡ 每天12+事件</div>
+    <div class="tl-chip">🦋 蝴蝶效应系统</div>
   </div>
-  <p style="font-size:13px;color:#888;font-weight:700;margin-top:6px">👆 选择一个空间探险模块开始游戏</p>
+  <button class="btn-main" onclick="goChar()">选择你的角色 →</button>
 </div>
 
-<div id="game" class="screen">
-  <div class="topbar">
-    <button class="btn-home" onclick="goHome()">🏠</button>
-    <div class="sbar">⭐ 得分：<b id="sn">0</b></div>
-    <div class="progwrap"><div class="progfill" id="pf" style="width:0%"></div></div>
-    <div class="mod-label" id="ml"></div>
-    <button class="btn-hint" onclick="hint()">💡 需要一点小提示</button>
+<!-- ══ CHARACTER SELECT ══ -->
+
+<div id="s-char" class="screen">
+  <div class="char-header">
+    <div class="ch-title">选择你的实习生身份</div>
+    <div class="ch-sub">不同背景有不同初始属性和隐藏加成，选择影响全程体验</div>
   </div>
-  <div class="garea" id="ga"></div>
+  <div class="char-scroll" id="char-scroll"></div>
+  <div class="char-confirm">
+    <button class="btn-confirm" id="btn-confirm" onclick="startGame()" disabled>开始实习之路 →</button>
+  </div>
 </div>
 
-<div id="finish" class="screen">
-  <div class="fstar">🐼</div>
-  <div class="ftitle">这一次的空间旅程结束啦！</div>
-  <div id="fst" class="fstars">⭐⭐⭐</div>
-  <div id="fsc" class="fscore"></div>
+<!-- ══ GAME ══ -->
 
-  <div class="bagua-wrap">
-    <div style="font-size:14px;font-weight:800;color:#555;">本次游戏行为八卦图 · 空间小画像</div>
-    <div class="bagua" id="bagua"></div>
-  </div>
-
-  <button class="bbig" onclick="goHome()">🏠 回到空间地图</button>
+<div id="s-game" class="screen">
+  <div class="stats-bar" id="stats-bar"></div>
+  <div class="prog-track" id="prog-track"></div>
+  <div class="gs" id="gs"><div id="scene-area"></div></div>
 </div>
 
-<div class="fbk" id="fb"><div class="fbke" id="fe">🎉</div><div class="fbkt" id="ft">太棒了！</div></div>
-<div class="npc" id="npc"><div class="nav">🐼</div><div class="npt" id="nt"></div></div>
+<!-- ══ ENDING ══ -->
+
+<div id="s-end" class="screen">
+  <div id="end-content"></div>
+</div>
+
+</div>
 
 <script>
-// 模块配置：顺序决定难度递增
-const MODULES={
-  starter:{name:'星星起步站',rounds:1,seq:['shape']},
-  explorer:{name:'小小探路营',rounds:3,seq:['shape','position','rotation']},
-  tower:{name:'空间挑战塔',rounds:5,seq:['shape','position','rotation','compose','rotation']},
-  graduate:{name:'宇宙升学舱',rounds:5,seq:['position','rotation','compose','compose','rotation']},
-};
+/* ══════════════ AUDIO ══════════════ */
+let AC=null,MG=null,SND=true,ambTimer=null;
+function initAudio(){
+  try{AC=new(window.AudioContext||window.webkitAudioContext)();MG=AC.createGain();MG.gain.value=.16;MG.connect(AC.destination);}catch(e){SND=false;}
+}
+function resumeAC(){if(AC&&AC.state==='suspended')AC.resume();}
+function tone(f,type='sine',dur=.18,vol=.3,delay=0){
+  if(!AC||!SND)return;resumeAC();
+  try{const o=AC.createOscillator(),g=AC.createGain();o.connect(g);g.connect(MG);o.type=type;o.frequency.value=f;
+  const t=AC.currentTime+delay;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.02);g.gain.exponentialRampToValueAtTime(.001,t+dur);o.start(t);o.stop(t+dur+.05);}catch(e){}
+}
+function chord(fs,type,dur,vol){fs.forEach((f,i)=>tone(f,type,dur,vol,i*.03));}
+function sfxClick(){chord([440,554,659],'sine',.15,.14);}
+function sfxSel(){chord([523,659,784],'sine',.25,.16);}
+function sfxBad(){chord([220,185,165],'sawtooth',.3,.11);}
+function sfxGood(){chord([523,659,784,1047],'sine',.4,.14);}
+function sfxNotif(){tone(880,'sine',.1,.18);setTimeout(()=>tone(1109,'sine',.15,.18),110);}
+function sfxUp(){[523,659,784,1047,1319].forEach((f,i)=>tone(f,'sine',.2,.18,i*.08));}
+function sfxDrama(){tone(110,'sawtooth',.6,.14);setTimeout(()=>tone(98,'sawtooth',.5,.1),200);}
+function startAmb(){stopAmb();let b=0;ambTimer=setInterval(()=>{const pp=[[196,.07],[0,0],[196,.05],[0,0],[220,.06],[0,0]];const p=pp[b++%pp.length];if(p[0])tone(p[0],'sine',.4,p[1]);},650);}
+function stopAmb(){if(ambTimer){clearInterval(ambTimer);ambTimer=null;}}
+function toggleSnd(){SND=!SND;document.getElementById('snd-btn').textContent=SND?'🔊':'🔇';document.getElementById('snd-btn').classList.toggle('off',!SND);if(SND){initAudio();startAmb();}else stopAmb();}
 
-let S={
-  module:'starter',
-  m:'shape',
-  score:0,
-  round:0,
-  total:1,
-  ans:null,
-  wrong:0,
-  hint:null,
-  stats:{correct:0,wrong:0,hints:0,byMode:{shape:{c:0,w:0},rotation:{c:0,w:0},position:{c:0,w:0},compose:{c:0,w:0}}}
-};
-
-const NM={
-  start:['准备一起出发咯！🌟','我在这里等你很久啦！','小太空熊猫陪你慢慢玩～'],
-  ok:['太厉害了，小脑袋真聪明！','答对啦，我们继续向前走！','你刚刚那一下想得真棒！'],
-  no:['没关系，我们再想一想。','可以慢一点，看清楚再选～','再试一次，我陪着你。'],
-  hi:['看看形状和方向有啥不一样？','注意观察题目里的小细节哦～','先停一下，深呼吸再看一看。'],
-};
-
-let AC=null;
-function gaCtx(){if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();return AC;}
-function tone(f,d,t='sine',v=.3){try{const c=gaCtx(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type=t;o.frequency.value=f;g.gain.setValueAtTime(v,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+d);o.start(c.currentTime);o.stop(c.currentTime+d);}catch(e){}}
-function pok(){tone(523,.12);setTimeout(()=>tone(659,.12),120);setTimeout(()=>tone(784,.25),240);}
-function pno(){tone(260,.15,'sawtooth',.2);}
-function pck(){tone(440,.08,'sine',.15);}
-
-function confetti(){
-  const cs=['#FF6B6B','#FFD83D','#6EC6F5','#B07FE8','#6EC96E','#FF8DC7','#FF9D42'];
-  for(let i=0;i<28;i++){
-    const e=document.createElement('div');e.className='cp';
-    e.style.cssText=`left:${Math.random()*100}vw;top:-20px;background:${cs[~~(Math.random()*cs.length)]};animation-duration:${1.2+Math.random()}s;animation-delay:${Math.random()*.4}s;border-radius:${Math.random()>.5?'50%':'3px'};`;
-    document.body.appendChild(e);setTimeout(()=>e.remove(),2400);
-  }
+/* ══════════════ PARTICLES ══════════════ */
+function spawnPts(){
+  const c=document.getElementById('pts');
+  const cols=['rgba(167,139,250,','rgba(45,212,191,','rgba(240,180,41,','rgba(96,165,250,'];
+  for(let i=0;i<16;i++){const p=document.createElement('div');p.className='pt';const sz=2+Math.random()*3;const col=cols[Math.floor(Math.random()*cols.length)];
+  p.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;background:${col}.65)};box-shadow:0 0 4px ${col}.4)};--dx:${(Math.random()-.5)*80}px;animation-duration:${8+Math.random()*12}s;animation-delay:${Math.random()*10}s;`;c.appendChild(p);}
 }
 
-let nT=null;
-function npc(type){
-  const m=NM[type]||NM.start,t=m[~~(Math.random()*m.length)],b=document.getElementById('npc'),n=document.getElementById('nt');
-  n.textContent=t;b.classList.add('on');clearTimeout(nT);nT=setTimeout(()=>b.classList.remove('on'),3500);
-}
-
-function feedback(ok,msg){
-  const o=document.getElementById('fb');
-  o.className='fbk on '+(ok?'okbg':'nobg');
-  document.getElementById('fe').textContent=ok?['🎉','🌟','🥳','✨','🎊'][~~(Math.random()*5)]:['💙','🌈','💪'][~~(Math.random()*3)];
-  document.getElementById('ft').textContent=msg;
-  setTimeout(()=>{o.className='fbk';},1400);
-}
-
-function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
-function goHome(){pck();document.getElementById('npc').classList.remove('on');showScreen('home');}
-
-// 启动模块
-function startModule(mod){
-  if(!MODULES[mod])mod='starter';
-  const cfg=MODULES[mod];
-  pck();
-  S={
-    module:mod,
-    m:cfg.seq[0]||'shape',
-    score:0,
-    round:0,
-    total:cfg.rounds,
-    ans:null,
-    wrong:0,
-    hint:null,
-    stats:{correct:0,wrong:0,hints:0,byMode:{shape:{c:0,w:0},rotation:{c:0,w:0},position:{c:0,w:0},compose:{c:0,w:0}}}
-  };
-  showScreen('game');
-  document.getElementById('ml').textContent=cfg.name;
-  upd();
-  setTimeout(()=>npc('start'),600);
-  render();
-}
-
-function upd(){
-  document.getElementById('pf').style.width=(S.round/S.total*100)+'%';
-  document.getElementById('sn').textContent=S.score;
-}
-
-// 根据模块与关卡决定当前题型（保证难度递增）
-function currentMode(){
-  const cfg=MODULES[S.module];
-  return (cfg.seq[S.round]||cfg.seq[cfg.seq.length-1]||'shape');
-}
-
-function render(){
-  if(S.round>=S.total){finish();return;}
-  S.wrong=0;S.hint=null;
-  S.m=currentMode();
-  const a=document.getElementById('ga');
-  if(S.m==='shape')rShape(a);
-  else if(S.m==='rotation')rRot(a);
-  else if(S.m==='position')rPos(a);
-  else rComp(a);
-}
-
-// SHAPE
-const SP=[
-  {e:'🔴',g:'圆形'},{e:'🔵',g:'圆形'},{e:'🟡',g:'圆形'},{e:'🟣',g:'圆形'},
-  {e:'🟥',g:'方形'},{e:'🟦',g:'方形'},{e:'🟩',g:'方形'},{e:'⬛',g:'方形'},
-  {e:'🔺',g:'三角'},{e:'🔻',g:'三角'},
-  {e:'🌟',g:'星形'},{e:'⭐',g:'星形'},
-  {e:'❤️',g:'心形'},{e:'🩷',g:'心形'},
+/* ══════════════ CHARACTERS ══════════════ */
+const CHARS = [
+  {
+    id:'top985', emoji:'🎓', name:'陈思远', badge:'985研究生', badgeCol:'#f0b429',
+    school:'上海交通大学 硕士 · 计算机', tags:['算法扎实','英语流利','内推资源多'],
+    grad:'rgba(240,180,41,.06)', col:'#f0b429',
+    stats:{hp:85,en:75,rep:35,str:25,sk:65,mo:60},
+    perk:'<b>学历光环</b>：简历初筛通过率+30%，大厂面试官对你更友好，但实际动手能力会被更严格检验',
+    desc:'从小鸡娃长大，笔试手到擒来。名校光环让简历投递占尽先机，但面试压力也更大。',
+  },
+  {
+    id:'overseas', emoji:'✈️', name:'林晓彤', badge:'海归留学生', badgeCol:'#2dd4bf',
+    school:'伦敦大学学院 本科 · 商业分析', tags:['全球视野','英文材料无压力','海外实习背景'],
+    grad:'rgba(45,212,191,.06)', col:'#2dd4bf',
+    stats:{hp:80,en:80,rep:40,str:20,sk:45,mo:80},
+    perk:'<b>国际背景</b>：初始钱包+20（家庭支持），HR面试自带好感，但国内互联网黑话需要补课',
+    desc:'从小到大都在"别人家孩子"的位置，但回国后发现国内互联网生态和预期完全不同。',
+  },
+  {
+    id:'985undergrad', emoji:'📚', name:'王浩然', badge:'985本科', badgeCol:'#60a5fa',
+    school:'华中科技大学 本科 · 软件工程', tags:['实习经历丰富','刷题能手','性价比高'],
+    grad:'rgba(96,165,250,.06)', col:'#60a5fa',
+    stats:{hp:90,en:85,rep:25,str:30,sk:55,mo:40},
+    perk:'<b>均衡选手</b>：技能和精力初始值高，是最"正常"的难度，没有明显短板但也没有加速器',
+    desc:'大二就开始实习，刷了三百道LeetCode，手感极好。没有研究生的光环，靠实力说话。',
+  },
+  {
+    id:'double211', emoji:'💪', name:'赵小敏', badge:'双非本科', badgeCol:'#fb7185',
+    school:'某省属高校 本科 · 市场营销', tags:['执行力强','吃苦耐劳','内推资源少'],
+    grad:'rgba(251,113,133,.06)', col:'#fb7185',
+    stats:{hp:100,en:90,rep:10,str:40,sk:30,mo:20},
+    perk:'<b>硬核模式</b>：简历初筛被卡概率高，但每次突破加分+50%，最终声誉上限更高',
+    desc:'学校普通但她自己很优秀。参加了三个校外社团，做过两个0到1的项目。她知道自己的路要靠自己走。',
+  },
+  {
+    id:'cs_master', emoji:'🤖', name:'刘子晗', badge:'AI方向研究生', badgeCol:'#a78bfa',
+    school:'北京大学 硕士 · 人工智能', tags:['大模型背景','论文在投','技术壁垒高'],
+    grad:'rgba(167,139,250,.06)', col:'#a78bfa',
+    stats:{hp:75,en:70,rep:45,str:20,sk:80,mo:45},
+    perk:'<b>AI时代红利</b>：技术岗直接加速，字节/百度等AI岗面试绿色通道，但社交属性初始偏低',
+    desc:'方向是大模型推理加速，组里有论文在ICLR在投。他的问题不是找不到工作，是太多大厂来抢他。',
+  },
+  {
+    id:'product', emoji:'🎨', name:'张语桐', badge:'产品方向应届', badgeCol:'#fb923c',
+    school:'复旦大学 本科 · 传播学', tags:['文案能力强','用户感知好','数据弱项'],
+    grad:'rgba(251,146,60,.06)', col:'#fb923c',
+    stats:{hp:85,en:80,rep:20,str:35,sk:35,mo:50},
+    perk:'<b>产品思维</b>：非技术面试加分，用户洞察类题目额外+10分，但技术类事件需要多花精力',
+    desc:'做了两年校媒，在小红书有2000粉丝。她想做产品经理，但第一道关是：让技术同事服气。',
+  },
 ];
-function rShape(a){
-  const p=shuffle([...SP]),tg=p[0];
-  const same=p.filter(s=>s.g===tg.g&&s.e!==tg.e);
-  const diff=shuffle(p.filter(s=>s.g!==tg.g));
-  const opts=shuffle([tg,...same.slice(0,1),...diff.slice(0,2)]);
-  S.ans=tg.e;
-  a.innerHTML=`<div class="tlabel">🎯 找出和中间一样的图形</div>
-  <div class="szone">
-    <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
-      <div style="font-size:13px;font-weight:700;color:#aaa">这是：<b>${tg.g}</b></div>
-      <div class="tbox" id="tb">${tg.e}</div>
-    </div>
-    <div class="srow">${opts.map(o=>`<div class="sopt" onclick="ckShape('${o.e}','${tg.e}')">${o.e}</div>`).join('')}</div>
-  </div>`;
-}
-function ckShape(c,r){
-  pck();
-  if(c===r){
-    S.stats.correct++;S.stats.byMode.shape.c++;
-    pok();confetti();feedback(true,['太棒了！🌟','答对啦！','你真聪明！✨'][~~(Math.random()*3)]);npc('ok');
-    const tb=document.getElementById('tb');if(tb)tb.classList.add('ok');
-    S.score++;S.round++;upd();setTimeout(render,1500);
-  }else{
-    S.stats.wrong++;S.stats.byMode.shape.w++;
-    pno();S.wrong++;feedback(false,['再找找！','仔细看看！','你可以的！'][~~(Math.random()*3)]);npc('no');
-    document.querySelectorAll('.sopt').forEach(el=>{if(el.textContent.trim()===c){el.classList.add('bad');setTimeout(()=>el.classList.remove('bad'),500);}});
-    if(S.wrong>=2)hint();
-  }
-}
 
-// ROTATION
-const RE=['🚀','🦋','🐢','🏠','🦊','🐸','🎯','🌈','🎁','🦁'];
-const RA=[0,45,90,135,180];
-function rRot(a){
-  const em=RE[S.round%RE.length],tg=RA[~~(Math.random()*RA.length)];
-  const wr=shuffle(RA.filter(x=>x!==tg));
-  const opts=shuffle([tg,...wr.slice(0,2)]);
-  S.ans=tg;
-  a.innerHTML=`<div class="tlabel">🌀 记住左边的样子，选出它转动后的样子</div>
-  <div class="rzone">
-    <div class="rdemo">
-      <div class="rbox"><div class="rlbl">没转之前</div><div class="rshape">${em}</div></div>
-      <div class="rarr">→</div>
-      <div class="rbox"><div class="rlbl">转一转之后 ✨</div><div class="rshape rtarget" id="rtg" style="transform:rotate(${tg}deg)">${em}</div></div>
-    </div>
-    <div class="tlabel" style="font-size:14px;color:#888">哪个角度和右边一模一样？</div>
-    <div class="rchoices">
-      ${opts.map(ag=>`<div class="ropt" onclick="ckRot(${ag},${tg})"><span style="transform:rotate(${ag}deg);font-size:50px">${em}</span><div class="adeg">${ag}°</div></div>`).join('')}
-    </div>
-  </div>`;
-}
-function ckRot(c,r){
-  pck();
-  if(c===r){
-    S.stats.correct++;S.stats.byMode.rotation.c++;
-    pok();confetti();feedback(true,['旋转达人！🌀','转对了！','太厉害了！'][~~(Math.random()*3)]);npc('ok');
-    S.score++;S.round++;upd();setTimeout(render,1500);
-  }else{
-    S.stats.wrong++;S.stats.byMode.rotation.w++;
-    pno();S.wrong++;feedback(false,['再看看角度～','多了还是少了？','仔细想想！'][~~(Math.random()*3)]);npc('no');
-    document.querySelectorAll('.ropt').forEach(el=>{const b=el.querySelector('.adeg');if(b&&parseInt(b.textContent)===c){el.classList.add('bad');setTimeout(()=>el.classList.remove('bad'),500);}});
-    if(S.wrong>=2)hint();
-  }
-}
-
-// POSITION
-const PW=[
-  {t:'上面',i:'⬆️',s:'top:10%;left:50%;transform:translateX(-50%)'},
-  {t:'下面',i:'⬇️',s:'top:62%;left:50%;transform:translateX(-50%)'},
-  {t:'左边',i:'⬅️',s:'top:38%;left:10%'},
-  {t:'右边',i:'➡️',s:'top:38%;left:68%'},
-  {t:'中间',i:'🎯',s:'top:35%;left:50%;transform:translateX(-50%)'},
+/* ══════════════ GAME STATE ══════════════ */
+const G={
+  char:null, phase:'hunt', huntDay:1, internDay:1,
+  evtIdx:0,
+  stats:{hp:100,en:80,rep:20,str:30,sk:15,mo:50},
+  deltas:{hp:0,en:0,rep:0,str:0,sk:0,mo:0},
+  flags:{}, done:false,
+};
+const SM=[
+  {key:'hp', ico:'❤️',label:'生命',c:'var(--hp-c)'},
+  {key:'en', ico:'⚡',label:'精力',c:'var(--en-c)'},
+  {key:'rep',ico:'⭐',label:'声誉',c:'var(--rep-c)'},
+  {key:'str',ico:'🌀',label:'压力',c:'var(--str-c)',inv:true},
+  {key:'sk', ico:'📚',label:'技能',c:'var(--sk-c)'},
+  {key:'mo', ico:'💰',label:'钱包',c:'var(--mo-c)'},
 ];
-const PS=[{o:'🐱',q:'小猫在哪里？'},{o:'🐦',q:'小鸟在哪里？'},{o:'🌸',q:'花朵在哪里？'},{o:'⭐',q:'星星在哪里？'},{o:'🐸',q:'青蛙跳到哪里？'},{o:'🎈',q:'气球飘到哪里？'},{o:'🐝',q:'小蜜蜂在哪里？'}];
-function rPos(a){
-  const sc=PS[S.round%PS.length],cor=PW[~~(Math.random()*PW.length)];
-  const wr=shuffle(PW.filter(p=>p.t!==cor.t));
-  const ch=shuffle([cor,...wr.slice(0,4)]);
-  S.ans=cor.t;
-  a.innerHTML=`<div class="tlabel">🗺️ ${sc.q}</div>
-  <div class="pzone">
-    <div class="pscene">
-      <div style="position:absolute;font-size:36px;bottom:6px;right:10px">🌳</div>
-      <div class="pobj" style="${cor.s}">${sc.o}</div>
-    </div>
-    <div class="pgrid">
-      ${ch.map(c=>`<button class="pbtn" onclick="ckPos('${c.t}','${cor.t}')"><span class="pi">${c.i}</span>${c.t}</button>`).join('')}
-    </div>
-  </div>`;
-}
-function ckPos(c,r){
-  pck();
-  if(c===r){
-    S.stats.correct++;S.stats.byMode.position.c++;
-    pok();confetti();feedback(true,['位置达人！🗺️','找到了！','你真棒！'][~~(Math.random()*3)]);npc('ok');
-    S.score++;S.round++;upd();setTimeout(render,1500);
-  }else{
-    S.stats.wrong++;S.stats.byMode.position.w++;
-    pno();S.wrong++;feedback(false,['再看看～','上下左右想一想','你可以的！'][~~(Math.random()*3)]);npc('no');
-    document.querySelectorAll('.pbtn').forEach(btn=>{if(btn.textContent.includes(c)&&!btn.textContent.includes(r)){btn.classList.add('bad');setTimeout(()=>btn.classList.remove('bad'),500);}});
-    if(S.wrong>=2)hint();
-  }
+function clamp(v){return Math.max(0,Math.min(100,v));}
+function applyD(d){Object.entries(d).forEach(([k,v])=>{if(G.stats[k]!==undefined){G.stats[k]=clamp(G.stats[k]+v);G.deltas[k]=(G.deltas[k]||0)+v;}});}
+function setBG(grad,strip){
+  document.getElementById('cbg').style.background=grad;
+  document.documentElement.style.setProperty('--strip',strip||'var(--lav)');
 }
 
-// COMPOSE
-const CI=[
-  {p:['🔴','🔵'],r:'👀',q:'两个圆圆合在一起像什么？',h:'眼睛有两个圆'},
-  {p:['🔺','🟩'],r:'🏠',q:'三角形加方形变成什么？',h:'三角屋顶+方形墙'},
-  {p:['🔴','🔺'],r:'🍦',q:'圆形加三角形是什么美食？',h:'夏天最爱吃的'},
-  {p:['🟩','🟩','🟩'],r:'🌳',q:'很多绿色拼在一起是什么？',h:'公园里高高的'},
-  {p:['⭐','⭐','⭐'],r:'🌌',q:'许多星星在夜空是什么？',h:'晚上抬头看到的'},
-  {p:['🌙','⭐'],r:'🌃',q:'月亮加星星是什么场景？',h:'夜晚城市的样子'},
-  {p:['🔵','🔵','🔵'],r:'🌊',q:'许多蓝色波浪合在一起是什么？',h:'大海的样子'},
+/* ══════════════ EVENTS DATA ══════════════ */
+// 求职阶段 12 events
+const HUNT_EVTS=[
+  {
+    id:'h1',time:'23:10',phase:'简历制作',
+    bg:'radial-gradient(ellipse 65% 55% at 30% 30%,rgba(55,48,160,.22) 0%,transparent 60%)',strip:'#a78bfa',
+    em:'📄',fem:['💻','☕','📝'],
+    title:'深夜，空白的简历页面像一面镜子',
+    desc:'你打开招聘JD，发现要求里有一条：<span class="hl-g">熟悉大数据分析工具，有互联网实习经验优先</span>。你的实习栏还空着。',
+    choices:[
+      {ico:'✍️',txt:'认真挖掘每段经历，用STAR法则量化成果',tag:'精打',tc:'t-safe',col:'#34d399',
+       d:{hp:0,en:-8,str:-5,sk:+10,mo:0},
+       story:'两小时后，你把校内项目的"带动UV提升30%"这句话加进去了——这是真实的，但你第一次意识到它的价值。',
+       rip:'简历质量高，HR停留时间+15秒，初筛通过率+25%',flag:'resume_star'},
+      {ico:'📋',txt:'直接套模板，改名字和学校',tag:'应付',tc:'t-risk',col:'#f87171',
+       d:{hp:0,en:0,str:0,sk:0,mo:0},
+       story:'五分钟搞定。ATS系统给你的匹配度打了43分，HR看了3秒翻到了下一张。',
+       rip:'简历湮没在千份投递中，初筛概率下降50%'},
+      {ico:'🤝',txt:'找师兄帮改简历，请他吃了顿饭',tag:'人脉',tc:'t-cow',col:'#60a5fa',
+       d:{hp:0,en:0,rep:+8,str:-5,sk:+5,mo:-18},
+       story:'师兄改了三处关键描述，还顺带说"我们组可能有HC，你想来吗"。',
+       rip:'获得内推直通，解锁继任渠道',flag:'have_referral'},
+      {ico:'🤖',txt:'让AI帮写，把输出直接粘贴进去',tag:'偷懒',tc:'t-wild',col:'#fbbf24',
+       d:{hp:0,en:0,str:-8,sk:0,mo:0},
+       story:'"负责XX项目，推动ROI提升35%，沉淀SOP赋能团队……"这段话你在三份竞对简历里都见过。面试官也见过。',
+       rip:'AI味过重，面试时被追问细节容易露馅',flag:'resume_ai'},
+    ]
+  },
+  {
+    id:'h2',time:'次日09:30',phase:'投递策略',
+    bg:'radial-gradient(ellipse 70% 50% at 60% 20%,rgba(251,191,36,.1) 0%,transparent 60%)',strip:'#fbbf24',
+    em:'🎯',fem:['📬','🖱️','🗂️'],
+    title:'打开Boss直聘，你要怎么投？',
+    desc:'实习僧显示本周互联网岗位新增3400+，<span class="hl-r">竞争比例最高的是字节产品和阿里运营</span>，简历投递量是HC的80倍。',
+    choices:[
+      {ico:'🌊',txt:'海投100+，"统计学总有幸运"',tag:'广撒网',tc:'t-risk',col:'#f87171',
+       d:{hp:-5,en:-12,str:+18,sk:0,mo:0},
+       story:'投出去113份，3天后收到9封面试邀请，但发现有2家公司根本不在你的目标list里。',
+       rip:'量大但准备时间被碎片化，每场面试都仓促应战'},
+      {ico:'🎯',txt:'精选20家，每封写针对性求职信',tag:'精准',tc:'t-safe',col:'#34d399',
+       d:{hp:0,en:-10,str:+5,sk:+8,mo:0},
+       story:'你在小红书实习申请里写了一段关于社区内容生态的思考，对方HR当天约了面试。',
+       rip:'回复率42%，面试质量显著提升'},
+      {ico:'🤝',txt:'优先找内推/继任，再补投官网',tag:'王道',tc:'t-cow',col:'#60a5fa',
+       d:{hp:0,en:-5,rep:+12,str:0,sk:0,mo:0},
+       story:'牛客网帖子找到了目标组的前实习生，对方同意帮推，还给你发了面经。',
+       rip:'继任>内推>官网，直通初筛，优先级最高'},
+      {ico:'😴',txt:'先把简历再改改，明天再投',tag:'拖延',tc:'t-risk',col:'#f87171',
+       d:{hp:+8,en:+10,str:-15,sk:0,mo:0},
+       story:'又改了两个小时，感觉更好了。但同批竞争者已经拿到三封面试通知了。',
+       rip:'心态好但时间窗口压缩，部分岗位HC被提前填满'},
+      {ico:'💡',txt:'先研究目标公司，弄清楚哪个部门更好进',tag:'策略',tc:'t-snk',col:'#a78bfa',
+       d:{hp:0,en:-8,str:0,sk:+12,mo:0},
+       story:'你发现字节电商组和增长组加班最卷，但小红书社区内容组口碑好转正率高，当机立断改了优先级。',
+       rip:'解锁"部门情报"——避开坑组，直投好组',flag:'dept_intel'},
+    ]
+  },
+  {
+    id:'h3',time:'00:30',phase:'深夜内耗',
+    bg:'radial-gradient(ellipse 60% 55% at 50% 60%,rgba(30,27,75,.5) 0%,transparent 60%)',strip:'#6d28d9',
+    em:'😔',fem:['📱','🌙','💭'],
+    title:'脉脉上看到有人晒出字节L3的offer，总包180w',
+    desc:'评论区有人在讨论"双非能进大厂吗"，最高赞回答是：<span class="hl-r">"背景不够就只能靠运气"</span>。你看着自己的简历发了很久的呆。',
+    choices:[
+      {ico:'😤',txt:'关掉手机，提醒自己比较只会内耗',tag:'清醒',tc:'t-safe',col:'#34d399',
+       d:{hp:+5,en:0,str:-12,sk:0,mo:0},
+       story:'你想起报告里说的：部门比公司重要，核心岗>边缘岗。找对坑才是关键，学历只是门票而不是终点。',
+       rip:'心态稳定，明天面试状态+10'},
+      {ico:'📱',txt:'继续刷，越刷越焦虑',tag:'自虐',tc:'t-risk',col:'#f87171',
+       d:{hp:-12,en:-15,str:+22,sk:0,mo:0},
+       story:'刷到凌晨两点，最后一条是"双非被字节捞中但入职后很难有资源"。你睁眼到三点才睡着。',
+       rip:'明天精力-15，陷入焦虑循环'},
+      {ico:'📝',txt:'把焦虑转化为行动，整理一份目标公司的HC情报',tag:'内卷',tc:'t-wild',col:'#fbbf24',
+       d:{hp:-5,en:-10,str:+5,sk:+12,mo:0},
+       story:'你爬了20篇小红书帖子，整理出各公司实习转正率和加班强度，决定避开拼多多和字节电商组。',
+       rip:'获得关键情报：加班排行和转正数据',flag:'kb_research'},
+    ]
+  },
+  {
+    id:'h4',time:'上午10:30',phase:'笔试关卡',
+    bg:'radial-gradient(ellipse 80% 60% at 50% 50%,rgba(239,68,68,.1) 0%,transparent 60%)',strip:'#f87171',
+    em:'💻',fem:['⏱️','🧩','😰'],
+    title:'笔试来了：两道算法题 + 一道产品设计题',
+    desc:'第三题：<span class="hl-g">"如何设计一个功能让抖音直播间的用户留存率提升10%？请从数据视角给出完整方案。"</span>限时2小时。',
+    choices:[
+      {ico:'🧠',txt:'冷静分析，算法先做简单的，产品题用AARRR漏斗拆解',tag:'策略',tc:'t-safe',col:'#34d399',
+       d:{hp:0,en:-8,str:+5,sk:+8,mo:0},
+       story:'产品题你写了：用户流失节点定位→互动机制优化→AB测试验证→数据闭环。面试官在旁注里写了"思路清晰"。',
+       rip:'笔试通过，进入面试环节'},
+      {ico:'🔍',txt:'偷看了一下算法题答案',tag:'铤而走险',tc:'t-risk',col:'#f87171',
+       d:{hp:0,en:0,str:0,sk:0,mo:0},
+       story:'"检测到异常行为，本次笔试已取消。"你呆坐了三分钟。',
+       rip:'⚠️ 笔试取消，该公司此次机会丢失'},
+      {ico:'⚡',txt:'先把产品题全力做完，算法能过几道算几道',tag:'扬长',tc:'t-wild',col:'#fbbf24',
+       d:{hp:0,en:-10,str:+15,sk:+5,mo:0},
+       story:'产品题写了满满三页，算法只AC了一道。HR说"我们更看重产品思维"，你进了下一轮。',
+       rip:'产品思维被认可，但技术面可能被追问',flag:'product_focus'},
+      {ico:'🤖',txt:'产品题让AI先出一个框架，自己再完善',tag:'借力',tc:'t-snk',col:'#a78bfa',
+       d:{hp:0,en:-3,str:-5,sk:+5,mo:0},
+       story:'你在AI的框架上加了两个竞品的具体数据，显得很有调研深度。',
+       rip:'效率高，但需要真正理解内容，面试时能讲清楚'},
+    ]
+  },
+  {
+    id:'h5',time:'面试当天 09:50',phase:'等候区',
+    bg:'radial-gradient(ellipse 70% 55% at 50% 30%,rgba(109,40,217,.18) 0%,transparent 60%)',strip:'#a78bfa',
+    em:'😰',fem:['🪑','⏰','💧'],
+    title:'等候区坐了六个候选人，你是其中唯一一个双非',
+    desc:'你扫了一圈，有人穿着清华文化衫，有人在翻着密密麻麻的面经本。旁边有个人在低声背：<span class="hl-t">"DAU、MAU、CTR、CVR……"</span>',
+    choices:[
+      {ico:'🎵',txt:'戴上耳机，听歌稳住心态',tag:'调节',tc:'t-safe',col:'#34d399',
+       d:{hp:0,en:0,str:-12,sk:0,mo:0},
+       story:'你选了一首节奏舒缓的歌，等叫名字时，你是六个人里唯一一个没有抖腿的。',
+       rip:'进入面试室时状态最佳，第一印象+10'},
+      {ico:'👀',txt:'偷看他们背什么，越看越焦虑',tag:'折磨',tc:'t-risk',col:'#f87171',
+       d:{hp:-5,en:0,str:+18,sk:+3,mo:0},
+       story:'你发现有人在背"留存曲线分析"，而你根本没准备过这个……手心开始出汗。',
+       rip:'带着焦虑进入面试，发挥受影响'},
+      {ico:'💬',txt:'主动找旁边的候选人聊天',tag:'社牛',tc:'t-cow',col:'#60a5fa',
+       d:{hp:0,en:0,rep:+10,str:-8,sk:0,mo:0},
+       story:'"你也投的产品方向吗？" 你们聊了十分钟，她是小红书前实习生，顺带给了你几个高频面试题。',
+       rip:'解锁面试情报，新增人脉一枚'},
+    ]
+  },
+  {
+    id:'h6',time:'一面',phase:'技术/专业面',
+    bg:'radial-gradient(ellipse 70% 55% at 50% 30%,rgba(109,40,217,.18) 0%,transparent 60%)',strip:'#a78bfa',
+    em:'🤵',fem:['📋','💬','🖊️'],
+    title:'"你来说说你对互联网运营增长的理解"',
+    desc:'面试官是个看起来不超过30岁的年轻人，桌上放着<span class="hl-g">三个手机屏幕都在刷内容</span>。他看着你，等待你开口。',
+    choices:[
+      {ico:'📊',txt:'从AARRR模型展开，结合具体数据案例',tag:'专业',tc:'t-safe',col:'#34d399',
+       d:{hp:0,en:0,rep:+12,str:0,sk:0,mo:0},
+       story:'"拉新看CAC、留存看次日留存曲线、变现看ARPU……我之前做活动时发现裂变分销的ROI比付费投放高3倍。"面试官开始记笔记了。',
+       rip:'专业度被认可，进入深度追问环节'},
+      {ico:'💡',txt:'说了一个你真实观察到的用户行为洞察',tag:'真诚',tc:'t-cow',col:'#60a5fa',
+       d:{hp:0,en:0,rep:+18,str:0,sk:0,mo:0},
+       story:'"我发现小红书的用户在深夜11点-1点收藏率最高，但这个时段的推流资源最便宜……"面试官抬起头，说"你怎么发现的？"',
+       rip:'差异化洞察，面试官印象深刻+18'},
+      {ico:'😅',txt:'脑子有点空，说了一堆正确的废话',tag:'翻车',tc:'t-risk',col:'#f87171',
+       d:{hp:-5,en:0,rep:-10,str:+15,sk:0,mo:0},
+       story:'"运营就是…通过各种手段…提升用户活跃度…从而实现……"面试官低下头，在纸上写了个问号。',
+       rip:'第一印象扣分，需要后续找机会挽回'},
+      {ico:'🎭',txt:'反问："您们现在增长的核心抓手是什么方向？"',tag:'骚操作',tc:'t-snk',col:'#a78bfa',
+       d:{hp:0,en:0,rep:+10,str:0,sk:+5,mo:0},
+       story:'面试官愣了一秒，笑了："第一次有人这么开场。好，你先说，我来评价。"局面主动了。',
+       rip:'展现商业思维，印象分+10'},
+      {ico:'📖',txt:'把准备的竞品分析案例完整讲了一遍',tag:'充分准备',tc:'t-wild',col:'#fbbf24',
+       d:{hp:0,en:0,rep:+8,str:0,sk:+8,mo:0},
+       story:'你拿出了三家公司的GMV和DAU数据对比，面试官说"你准备得挺认真的"。',
+       rip:'准备充分被认可，但略显死板'},
+    ]
+  },
+  {
+    id:'h7',time:'HR面',phase:'薪资博弈',
+    bg:'radial-gradient(ellipse 65% 50% at 40% 40%,rgba(6,78,59,.18) 0%,transparent 60%)',strip:'#34d399',
+    em:'💰',fem:['📊','💵','🤝'],
+    title:'HR问：你期望的实习日薪是多少？',
+    desc:'你做过功课：<span class="hl-t">字节实习生日薪200-300，阿里150-250，小红书180-250</span>。她靠在椅背上等你开口，表情看不出喜怒。',
+    choices:[
+      {ico:'📊',txt:'先反问"这个岗位的薪资范围是多少"',tag:'策略',tc:'t-snk',col:'#a78bfa',
+       d:{hp:0,en:0,rep:+15,str:0,sk:+5,mo:+20},
+       story:'"150-300之间。"你心里有数了，说"我期望在220左右，可以根据具体情况沟通。" HR点头做了记录。',
+       rip:'谈到230/天，策略最优解'},
+      {ico:'💰',txt:'直接报250，给自己留谈判空间',tag:'进取',tc:'t-wild',col:'#fbbf24',
+       d:{hp:0,en:0,str:+8,sk:0,mo:+25},
+       story:'"我们会综合考虑。"HR的表情没有任何变化。你心跳加速，等着结果。',
+       rip:'结果随机：可能拿到230，也可能让HR觉得"要价高"'},
+      {ico:'😊',txt:'说"参考市场标准就好"',tag:'稳妥',tc:'t-safe',col:'#34d399',
+       d:{hp:0,en:0,rep:+5,str:0,sk:0,mo:0},
+       story:'"那我们给你180/天。"你接受了，但回去搜了一下，发现同组的另一个实习生拿到了220。',
+       rip:'顺利过关，但少了40/天，一个月少1200元'},
+      {ico:'🙏',txt:'"你们定就好，我都行"',tag:'被动',tc:'t-risk',col:'#f87171',
+       d:{hp:0,en:0,rep:-8,str:0,sk:0,mo:-20},
+       story:'HR写下了150/天。你接受了，心里有个东西塌了一块——记住这个感受。',
+       rip:'拿到最低档，以后谈判要有底线'},
+    ]
+  },
+  {
+    id:'h8',time:'第七天',phase:'等待期',
+    bg:'radial-gradient(ellipse 60% 55% at 50% 60%,rgba(30,27,75,.45) 0%,transparent 60%)',strip:'#6d28d9',
+    em:'📱',fem:['⏳','📧','😶'],
+    title:'七天了，邮箱还是空的',
+    desc:'你加了三个求职群，里面每天都有人晒offer。今天有人晒出了一张<span class="hl-g">字节日薪280的录用通知</span>，下面是236条评论。',
+    choices:[
+      {ico:'✉️',txt:'发一封礼貌的follow-up邮件',tag:'主动跟进',tc:'t-safe',col:'#34d399',
+       d:{hp:0,en:0,rep:+8,str:-8,sk:0,mo:0},
+       story:'"您好，我上周参加了贵组面试，想跟进一下后续流程……" HR当天回复：流程还在推进，请耐心等待。',
+       rip:'主动跟进加分，至少知道自己没掉线了'},
+      {ico:'🫠',txt:'继续等，同时海投其他公司',tag:'双线推进',tc:'t-cow',col:'#60a5fa',
+       d:{hp:0,en:-5,str:+10,sk:0,mo:0},
+       story:'又投了八家，其中三家在腾讯和美团。把所有筹码押在一家身上本来就不合理。',
+       rip:'焦虑+10，但备选增加，风险对冲'},
+      {ico:'💪',txt:'放下执念，告诉自己"不要这家"',tag:'断舍离',tc:'t-wild',col:'#a78bfa',
+       d:{hp:+10,en:+8,str:-20,sk:0,mo:0},
+       story:'你把这家公司的名字从备忘录里删掉了，第三天，对方发来了offer邮件。',
+       rip:'心理解压最有效，压力-20'},
+    ]
+  },
+  {
+    id:'h9',time:'二面',phase:'压力测试',
+    bg:'radial-gradient(ellipse 80% 60% at 50% 50%,rgba(239,68,68,.1) 0%,transparent 60%)',strip:'#f87171',
+    em:'🔥',fem:['💢','😤','🧊'],
+    title:'面试官突然说："你的简历我看了，项目经验比较弱"',
+    desc:'"我们这边实习生普遍都有<span class="hl-r">两段以上大厂经历</span>，你只有一个学生项目，你觉得你能胜任这个岗位吗？"',
+    choices:[
+      {ico:'😤',txt:'正面回应：讲出你做这个项目的深度和思考',tag:'硬刚',tc:'t-wild',col:'#fbbf24',
+       d:{hp:0,en:0,rep:+8,str:+10,sk:0,mo:0},
+       story:'"这个项目我从0到1做了数据体系，虽然规模小，但我理解背后的逻辑。" 面试官开始追问细节，你接住了。',
+       rip:'专业能力被认可，但压力增加'},
+      {ico:'🙂',txt:'坦白说"我经验确实少，但我学习速度快"',tag:'诚实',tc:'t-safe',col:'#34d399',
+       d:{hp:0,en:0,rep:+18,str:0,sk:0,mo:0},
+       story:'"知道自己在哪个阶段，比装作都懂要好很多。" 面试官说了这句话，你意识到局面已经转了。',
+       rip:'诚实大加分，面试官更愿意带这样的实习生'},
+      {ico:'🧊',txt:'反问"您觉得这个岗位最重要的能力是什么"',tag:'博弈',tc:'t-snk',col:'#a78bfa',
+       d:{hp:0,en:0,rep:+20,str:-5,sk:+8,mo:0},
+       story:'"执行力和数据敏感度。" "那这两点我可以给您举例子。" 局面完全逆转，面试官开始认真听你说话了。',
+       rip:'智慧应对，职业素养大幅加分'},
+      {ico:'😰',txt:'慌了，支吾了半天没说出核心',tag:'翻车',tc:'t-risk',col:'#f87171',
+       d:{hp:-8,en:0,rep:-15,str:+20,sk:0,mo:0},
+       story:'"呃……我觉得……我会认真学习……" 面试官写了什么，翻到了下一页。',
+       rip:'压力失控，发挥严重失常'},
+    ]
+  },
+  {
+    id:'h10',time:'收到offer当天',phase:'Offer决策',
+    bg:'radial-gradient(ellipse 70% 60% at 50% 40%,rgba(245,158,11,.14) 0%,transparent 60%)',strip:'#f0b429',
+    em:'🎊',fem:['🎉','⭐','🏆'],
+    title:'收到了两封offer：字节增长组 vs 小红书内容组',
+    desc:'字节增长：<span class="hl-g">日薪260，加班多（小红书实习生爆料晚上常开会）</span>。小红书内容：<span class="hl-t">日薪200，氛围好，转正率高</span>。',
+    choices:[
+      {ico:'🔥',txt:'选字节，薪资和品牌是第一位的',tag:'名利场',tc:'t-wild',col:'#fbbf24',
+       d:{hp:0,en:-5,rep:+15,str:+15,sk:+10,mo:+30},
+       story:'你签了字节。同学纷纷来问"字节是什么体验"，你感受到了一种叫做光环的东西。',
+       rip:'简历背书强，但后续精力消耗大，健康需注意'},
+      {ico:'🌸',txt:'选小红书，氛围和转正率更重要',tag:'长远',tc:'t-safe',col:'#34d399',
+       d:{hp:+8,en:+5,rep:+10,str:-10,sk:+8,mo:+15},
+       story:'你签了小红书。下午茶、健身房、弹性上班——但你知道这里的核心竞争力是内容敏感度，你得证明自己。',
+       rip:'转正机会更高，状态更好，选择符合长线规划'},
+      {ico:'🔍',txt:'再多调研一周，问问两边在职的人',tag:'稳健',tc:'t-cow',col:'#60a5fa',
+       d:{hp:0,en:-5,rep:+5,str:+5,sk:+5,mo:0},
+       story:'你在脉脉找到了两边的实习生匿名爆料，字节增长组有人说"做了三个月只做了一件重复的事"。你决定了。',
+       rip:'信息充分，做出最优决策'},
+      {ico:'💸',txt:'和两家砍价，看谁给得更高',tag:'博弈',tc:'t-snk',col:'#a78bfa',
+       d:{hp:0,en:0,rep:+5,str:+10,sk:0,mo:+20},
+       story:'字节直接说"条件已经是最优，不接受还价"。小红书的HR说"可以酌情考虑"，最终给到了220。',
+       rip:'小红书涨了20/天，字节底气足不接受砍价'},
+    ]
+  },
+  {
+    id:'h11',time:'入职前一晚',phase:'入职准备',
+    bg:'radial-gradient(ellipse 60% 55% at 50% 60%,rgba(30,27,75,.5) 0%,transparent 60%)',strip:'#6d28d9',
+    em:'🌙',fem:['👔','📱','😮‍💨'],
+    title:'明天第一天，你准备好了吗？',
+    desc:'你把明天要带的东西列了清单：<span class="hl-g">充电宝、简历若干份、记事本</span>……然后你打开了一篇"互联网大厂实习第一天注意事项"。',
+    choices:[
+      {ico:'📖',txt:'认真看完了公司内部的新人指南',tag:'充分备战',tc:'t-safe',col:'#34d399',
+       d:{hp:0,en:-5,str:-5,sk:+8,mo:0},
+       story:'你发现公司有一个内部知识库叫"新人必看"，还有一份"黑话词典"——"抓手、闭环、赋能……"你默默背了一遍。',
+       rip:'入职第一天黑话不会出丑，好感+5'},
+      {ico:'🧘',txt:'早点睡，保证明天精力充沛',tag:'养精蓄锐',tc:'t-cow',col:'#60a5fa',
+       d:{hp:+10,en:+15,str:-12,sk:0,mo:0},
+       story:'你关灯睡觉，半夜却反复醒来，脑子里各种想象明天的场景。最终还是睡够了七个小时。',
+       rip:'精力满格，明天第一天状态最好'},
+      {ico:'📱',txt:'在网上狂搜这家公司的实习爆料',tag:'信息焦虑',tc:'t-risk',col:'#f87171',
+       d:{hp:-5,en:-10,str:+15,sk:+3,mo:0},
+       story:'看到了一篇"XX组带教不管实习生，全在打杂"，你不知道你进的是不是这个组。睡前焦虑值MAX。',
+       rip:'信息过载，明天精力-10'},
+    ]
+  },
+  {
+    id:'h12',time:'入职当天早上',phase:'入职报到',
+    bg:'radial-gradient(ellipse 70% 50% at 60% 20%,rgba(251,191,36,.1) 0%,transparent 60%)',strip:'#fbbf24',
+    em:'🏢',fem:['🌅','☕','🪪'],
+    title:'你站在公司门口，门禁卡还没激活',
+    desc:'上班时间9点，现在8:52。电梯显示等待时间<span class="hl-r">9分钟</span>。你手里拎着早餐袋，额头微微出汗。',
+    choices:[
+      {ico:'🏃',txt:'扔下早餐，爬楼梯冲！',tag:'拼命',tc:'t-wild',col:'#fbbf24',
+       d:{hp:-8,en:-18,rep:+8,str:+15,sk:0,mo:0},
+       story:'气喘吁吁到22楼，汗湿了衬衫，准点打卡。带教路过说"挺拼的"，你喘着气说"正常操作"。',
+       rip:'"拼命三郎"第一印象，但今天全天精力受损'},
+      {ico:'📱',txt:'给带教提前发消息说电梯堵',tag:'报备',tc:'t-safe',col:'#34d399',
+       d:{hp:0,en:0,rep:+12,str:-5,sk:0,mo:0},
+       story:'"没事，主动说比迟到不说强多了。"这句回复让你松了一口气。带教在心里给你记了一个好印象。',
+       rip:'沟通意识被认可，带教好感+12'},
+      {ico:'😅',txt:'挤进电梯，就算迟到两分钟也无所谓',tag:'随缘',tc:'t-cow',col:'#60a5fa',
+       d:{hp:0,en:0,str:+5,sk:0,mo:0},
+       story:'"咔——"打卡机显示9:02。旁边的正式员工看了你一眼，没说话。你心跳了一下，记住了：明天早10分钟。',
+       rip:'小迟到，无大碍，但记住了教训'},
+    ]
+  },
 ];
-const DC=['🚗','🐶','🎁','🎈','🌸','🎵','🍕','🎀','🦊','🎪','🚂','🦁'];
-function rComp(a){
-  const item=CI[S.round%CI.length];
-  const d=shuffle([...DC]);
-  const ch=shuffle([item.r,d[0],d[1],d[2]]);
-  S.ans=item.r;S.hint=item.h;
-  a.innerHTML=`<div class="tlabel">🏗️ ${item.q}</div>
-  <div class="szone">
-    <div style="display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#FFF9E6,#FFFBE8);padding:12px 18px;border-radius:18px;border:3px solid var(--sun);flex-wrap:wrap;justify-content:center">
-      ${item.p.map((p,i)=>`<span style="font-size:42px">${p}</span>${i<item.p.length-1?'<span style="font-size:20px;color:#ccc">+</span>':''}`).join('')}
-      <span style="font-size:20px;color:#ccc">= ❓</span>
+
+// 实习阶段 12 events
+const INTERN_EVTS=[
+  {
+    id:'i1',time:'09:25',phase:'认识带教',
+    bg:'radial-gradient(ellipse 65% 55% at 50% 30%,rgba(14,116,144,.14) 0%,transparent 60%)',strip:'#2dd4bf',
+    em:'👔',fem:['💻','📊','🖥️'],
+    title:'带教拍了拍你肩膀：有问题随时问我',
+    desc:'他说完坐回去，戴上了降噪耳机，三个屏幕全是飞书消息和代码。<span class="hl-g">"随时问"</span>变成了一个量子态命题。',
+    choices:[
+      {ico:'📝',txt:'积攒问题，找时机统一问',tag:'观察',tc:'t-safe',col:'#34d399',
+       d:{hp:0,en:0,rep:+8,str:+5,sk:0,mo:0},
+       story:'等他拿咖啡站起来，你出击了。他说"会找时机的——你这个问题问得很准"。',
+       rip:'带教好感+8，建立了良好节奏'},
+      {ico:'🤔',txt:'直接拍他说"我有个问题"',tag:'字面执行',tc:'t-risk',col:'#f87171',
+       d:{hp:0,en:0,rep:-10,str:0,sk:0,mo:0},
+       story:'他摘耳机，用了三秒回答你，然后立刻戴回去，动作有点用力。',
+       rip:'带教无声扣分'},
+      {ico:'💻',txt:'先自己查飞书文档和内部Wiki',tag:'独立',tc:'t-cow',col:'#60a5fa',
+       d:{hp:0,en:-8,rep:+5,str:+8,sk:+12,mo:0},
+       story:'发现了公司有一个超详细的"新手指南"，解决了你80%的困惑。带教说"你自己能解决最好"。',
+       rip:'自学能力+12，带教觉得你靠谱'},
+      {ico:'🙋',txt:'去找同组另一个实习生取经',tag:'找同类',tc:'t-wild',col:'#a78bfa',
+       d:{hp:0,en:0,rep:+5,str:-8,sk:+5,mo:0},
+       story:'她比你早来三周，给你讲了哪个会议必须去，哪个可以旁听，带教最讨厌什么。',
+       rip:'解锁"实习生情报网"，生存技能大幅提升'},
+    ]
+  },
+  {
+    id:'i2',time:'10:30',phase:'第一个任务',
+    bg:'radial-gradient(ellipse 65% 55% at 50% 30%,rgba(14,116,144,.14) 0%,transparent 60%)',strip:'#2dd4bf',
+    em:'💼',fem:['📋','🗓️','⌛'],
+    title:'带教甩给你：做一份竞品分析报告，本周五交',
+    desc:'"不急，<span class="hl-g">本周五交就行。</span>"——现在是周一上午10:30。你完全不知道他期望几页、什么深度、什么格式。',
+    choices:[
+      {ico:'🙋',txt:'立刻问清楚：格式、深度、参考案例',tag:'对齐需求',tc:'t-safe',col:'#34d399',
+       d:{hp:0,en:0,rep:+15,str:-10,sk:+5,mo:0},
+       story:'带教发了一份去年的参考报告，还说"你这个问题问得好，很多实习生直接蒙头做，方向全错"。',
+       rip:'直接获得模板，省下两天试错时间，带教好感+15'},
+      {ico:'💪',txt:'今天就开始，先把框架搭出来',tag:'行动派',tc:'t-cow',col:'#60a5fa',
+       d:{hp:0,en:-10,rep:+5,str:+5,sk:+5,mo:0},
+       story:'你拉出了五个竞品，按DAU、功能矩阵、用户策略分类梳理。方向不一定对，但态度是真的认真。',
+       rip:'进度领先，但方向未对齐，可能返工'},
+      {ico:'🕵️',txt:'先翻内部Wiki，摸清楚公司业务逻辑再动手',tag:'摸鱼式学习',tc:'t-wild',col:'#fbbf24',
+       d:{hp:0,en:-5,str:0,sk:+10,mo:0},
+       story:'翻到了组里两年前做的竞品分析，发现了这条产品线的演进逻辑，豁然开朗。',
+       rip:'背景知识提升，报告深度会超出预期'},
+      {ico:'🤖',txt:'让AI先生成一版，自己做数据补充',tag:'借力打力',tc:'t-snk',col:'#a78bfa',
+       d:{hp:0,en:-3,str:-5,sk:+5,mo:0},
+       story:'AI给出了框架，你在里面塞了真实的DAU、GMV数据。带教说"数据引用不错，逻辑再打磨一下"。',
+       rip:'效率最高，但需要自己真正看懂每个数据'},
+    ]
+  },
+  {
+    id:'i3',time:'12:00',phase:'午饭社交',
+    bg:'radial-gradient(ellipse 60% 50% at 50% 30%,rgba(6,78,59,.18) 0%,transparent 60%)',strip:'#34d399',
+    em:'🍱',fem:['🥢','☀️','💬'],
+    title:'到了饭点，组里的人站起来走了，没人叫你',
+    desc:'你站在工位旁边，拿着手机装作在看消息。<span class="hl-r">五秒，十秒……</span>门关上了，你还站着。今天你怎么处理这个尴尬？',
+    choices:[
+      {ico:'🙋',txt:'追出去问"我可以一起吗？"',tag:'社牛',tc:'t-wild',col:'#a78bfa',
+       d:{hp:0,en:0,rep:+15,str:+8,sk:0,mo:-12},
+       story:'"来啊！"他们带你去了B2楼一个不在任何美食地图上的内部餐厅，据说是全公司最便宜的三荤一素。',
+       rip:'社交网络+15，顺带得知"下午3点有个跨部门对齐会"情报'},
+      {ico:'🎧',txt:'自己外卖，刷手机吃',tag:'慢热',tc:'t-safe',col:'#34d399',
+       d:{hp:0,en:+5,rep:0,str:-8,sk:0,mo:-15},
+       story:'一个人吃饭，你发现了一件事：公司楼下的奶茶店下午三点有五折优惠。孤独但划算。',
+       rip:'关系网络进展慢，但精力回复'},
+      {ico:'💬',txt:'找同期实习生一起去',tag:'找战友',tc:'t-cow',col:'#60a5fa',
+       d:{hp:+8,en:0,rep:+8,str:-10,sk:0,mo:-10},
+       story:'你们互诉苦水，发现对方遇到的带教问题和你一模一样。达成共识：以后互通情报。',
+       rip:'"实习生同盟"正式建立'},
+      {ico:'🥡',txt:'买两份外卖，问带教要不要一起',tag:'贴心',tc:'t-snk',col:'#34d399',
+       d:{hp:0,en:0,rep:+22,str:+5,sk:0,mo:-22},
+       story:'带教摘下耳机愣了一下，说"哦，谢谢。"饭桌上他多说了几句，还问了你对产品的看法。',
+       rip:'带教好感+22，破冰成功，值了'},
+    ]
+  },
+  {
+    id:'i4',time:'13:40',phase:'厕所摸鱼',
+    bg:'radial-gradient(ellipse 80% 60% at 50% 50%,rgba(109,40,217,.14) 0%,transparent 60%)',strip:'#c084fc',
+    em:'🚽',fem:['📱','💭','🌀'],
+    title:'今天第三次去厕所了，但你其实不需要上厕所',
+    desc:'坐在隔间里，你刷到了一条帖子：<span class="hl-g">"如何在不被发现的情况下摸鱼？"</span>。最高赞：<span class="hl-r">"去厕所。"</span>',
+    choices:[
+      {ico:'😤',txt:'立刻回工位，告诉自己要卷',tag:'自律',tc:'t-safe',col:'#34d399',
+       d:{hp:-3,en:-5,str:+10,sk:+3,mo:0},
+       story:'回去盯着文档，表面认真，脑子里在数今天还剩几小时。效率大概45%。',
+       rip:'看起来勤奋，实际效率中等'},
+      {ico:'📱',txt:'再刷五分钟，反正没人知道',tag:'摸透了',tc:'t-wild',col:'#fbbf24',
+       d:{hp:+5,en:+8,str:-8,sk:0,mo:0},
+       story:'你刷到了一条"实习生如何让自己显得很忙"的攻略，顺手收藏了。精力确实回来了。',
+       rip:'精力+8，下午效率提升'},
+      {ico:'🌬️',txt:'做两分钟盒子呼吸，清醒再出去',tag:'心理学',tc:'t-cow',col:'#60a5fa',
+       d:{hp:+8,en:+10,str:-15,sk:0,mo:0},
+       story:'4秒吸气、4秒屏住、4秒呼出。出来后步伐稳了，脑子清了，连鼠标拿着都比刚才顺手。',
+       rip:'压力-15，这是科学最推荐的减压方式'},
+    ]
+  },
+  {
+    id:'i5',time:'14:00',phase:'旁听需求评审',
+    bg:'radial-gradient(ellipse 60% 50% at 40% 40%,rgba(6,78,59,.18) 0%,transparent 60%)',strip:'#34d399',
+    em:'📊',fem:['💡','🖊️','📌'],
+    title:'带教叫你旁听一个产品需求评审会',
+    desc:'会议室里八个人，有产品、研发、运营、数据。PPT投上去，大家开始争论<span class="hl-g">留存率的归因</span>。你听懂了50%。',
+    choices:[
+      {ico:'📝',txt:'拼命记笔记，把每个词都写下来',tag:'认真',tc:'t-safe',col:'#34d399',
+       d:{hp:0,en:-8,rep:+10,sk:+10,str:+5,mo:0},
+       story:'会后你的笔记覆盖了会议纪要的80%。带教说"你还记笔记啊"，语气里是惊喜。',
+       rip:'带教好感+10，技能+10'},
+      {ico:'😶',txt:'假装在看PPT，其实神游',tag:'摸',tc:'t-risk',col:'#f87171',
+       d:{hp:0,en:0,rep:-8,str:-5,sk:0,mo:0},
+       story:'会后带教问你对数据归因的看法，你支吾了半天。他轻轻叹了口气。',
+       rip:'被贴上"不上心"标签'},
+      {ico:'✋',txt:'在会议上说了一个想法',tag:'大胆',tc:'t-wild',col:'#a78bfa',
+       d:{hp:0,en:0,rep:+20,str:+20,sk:0,mo:0},
+       story:'"实习生？"八个人同时看过来。产品总说"这个角度倒是挺新的"。你今晚会把这句话回放200遍。',
+       rip:'印象+20，但今晚会反复复盘是否显得很蠢'},
+      {ico:'📖',txt:'会后把所有不懂的词全部搜一遍',tag:'补课',tc:'t-cow',col:'#60a5fa',
+       d:{hp:0,en:-5,rep:+3,str:0,sk:+15,mo:0},
+       story:'"AB测试"、"灰度放量"、"DAU归因"……你搜了一个小时，技能大幅提升。',
+       rip:'技能+15，知识储备快速增长'},
+    ]
+  },
+  {
+    id:'i6',time:'17:40',phase:'下班博弈',
+    bg:'radial-gradient(ellipse 65% 55% at 50% 30%,rgba(14,116,144,.14) 0%,transparent 60%)',strip:'#60a5fa',
+    em:'🕔',fem:['⏰','🌃','💻'],
+    title:'到了下班时间，组里没有一个人站起来',
+    desc:'今日任务其实完成了。但旁边四个正式员工全在屏幕前，<span class="hl-r">职场隐形规则</span>在无声运作——你看不见它，但感觉得到它。',
+    choices:[
+      {ico:'🏃',txt:'到点走人，道个别就出发',tag:'守规矩',tc:'t-cow',col:'#34d399',
+       d:{hp:+8,en:+12,rep:0,str:-12,sk:0,mo:0},
+       story:'"嗯，好的。"带教没抬头。你出了门，60%轻松，40%不确定他是真的觉得没问题，还是在心里记了一笔。',
+       rip:'保住精力，明天状态满格'},
+      {ico:'💻',txt:'多干一小时，把报告再完善',tag:'表现',tc:'t-wild',col:'#fbbf24',
+       d:{hp:0,en:-12,rep:+8,str:+8,sk:+3,mo:0},
+       story:'带教路过扫了一眼你的屏幕，说了句"挺快的"。就这三个字，你觉得值了。',
+       rip:'印象+8，但今晚回家只剩两小时'},
+      {ico:'💬',txt:'问带教还有什么能帮的',tag:'体贴',tc:'t-safe',col:'#60a5fa',
+       d:{hp:0,en:-5,rep:+18,str:+3,sk:0,mo:0},
+       story:'"不用，你先走吧，谢谢。"这句谢谢的分量比你想象的重——带教很少谢人。',
+       rip:'带教好感+18，你被记住了'},
+    ]
+  },
+  {
+    id:'i7',time:'22:07',phase:'深夜消息',
+    bg:'radial-gradient(ellipse 60% 55% at 50% 60%,rgba(30,27,75,.5) 0%,transparent 60%)',strip:'#6d28d9',
+    em:'💬',fem:['📱','🌙','💤'],
+    title:'刚洗完澡，带教发来消息：明天9:30有个对齐会',
+    desc:'时间22:07，你刚准备睡了。消息里就一句话，没有上下文。<span class="hl-g">飞书消息显示"已送达"。</span>',
+    choices:[
+      {ico:'✅',txt:'秒回"好的，明天见！"',tag:'积极',tc:'t-safe',col:'#34d399',
+       d:{hp:0,en:0,rep:+5,str:+5,sk:0,mo:0},
+       story:'简短有力，显得靠谱。带教看到后没再发消息，你也不知道这算不算好事。',
+       rip:'靠谱形象+5'},
+      {ico:'😴',txt:'已读，明天早上回',tag:'边界感',tc:'t-risk',col:'#f87171',
+       d:{hp:+3,en:0,rep:-8,str:-5,sk:0,mo:0},
+       story:'你睡得很好。第二天早上带教看到你没回消息，眼神有一点微妙，他记住了。',
+       rip:'带教好感-8，被贴上"响应慢"标签'},
+      {ico:'📝',txt:'回复+顺手问"需要我准备什么吗"',tag:'超预期',tc:'t-wild',col:'#a78bfa',
+       d:{hp:0,en:0,rep:+20,str:+3,sk:+5,mo:0},
+       story:'带教发来一个文档，还加了一句"好，有准备意识"。五个字，你读了三遍。',
+       rip:'带教好感+20，信任建立'},
+      {ico:'💡',txt:'回复+附上一份你今天整理的相关数据',tag:'加码',tc:'t-snk',col:'#34d399',
+       d:{hp:0,en:-3,rep:+25,str:+5,sk:+8,mo:0},
+       story:'"顺便把数据整理了一份，明天可能用到。"带教25分钟没回，然后突然"+1，很有用"。',
+       rip:'带教好感+25，你被当成合作者对待了'},
+    ]
+  },
+  {
+    id:'i8',time:'第三天',phase:'暴露短板',
+    bg:'radial-gradient(ellipse 80% 60% at 50% 50%,rgba(239,68,68,.1) 0%,transparent 60%)',strip:'#f87171',
+    em:'😬',fem:['💢','📊','🔍'],
+    title:'带教让你做数据分析，但你的SQL很烂',
+    desc:'他发来一张数据表，让你"分析一下用户的<span class="hl-r">7日留存曲线</span>，下午要用"。你SQL基础薄弱，平时都靠Excel凑数。',
+    choices:[
+      {ico:'💪',txt:'现学现卖，查文档硬啃两小时',tag:'死磕',tc:'t-wild',col:'#fbbf24',
+       d:{hp:0,en:-15,rep:+5,str:+15,sk:+15,mo:0},
+       story:'你写了三个版本，终于跑出了结果。误差在可接受范围内。带教说"下次快一点"，但结果是对的。',
+       rip:'技能+15，但精力消耗大'},
+      {ico:'🙋',txt:'直接告诉带教"我SQL不熟，需要帮助"',tag:'诚实',tc:'t-safe',col:'#34d399',
+       d:{hp:0,en:0,rep:+12,str:0,sk:+8,mo:0},
+       story:'"知道自己的短板并直说，比装会然后出错要好得多。"带教调了组里的数据同学帮你，还告诉你哪里可以补课。',
+       rip:'诚实加分，获得帮助，快速补足短板'},
+      {ico:'🤖',txt:'让AI帮写SQL，自己验证结果',tag:'借力',tc:'t-snk',col:'#a78bfa',
+       d:{hp:0,en:-3,str:-5,sk:+10,mo:0},
+       story:'AI写了一段代码，你在数据库里跑了，结果合理。带教问你思路，你解释得清楚。',
+       rip:'效率高，会用AI工具是2026年必备技能'},
+      {ico:'😶',txt:'硬撑说"没问题"，然后用Excel假装完成',tag:'掩盖',tc:'t-risk',col:'#f87171',
+       d:{hp:0,en:-8,rep:-15,str:+15,sk:0,mo:0},
+       story:'Excel和SQL的结果有明显差异，带教皱了皱眉："这个数据是怎么跑出来的？"你的脸开始发热。',
+       rip:'被发现伪造数据，声誉-15，严重'},
+    ]
+  },
+  {
+    id:'i9',time:'第五天',phase:'绩效反馈',
+    bg:'radial-gradient(ellipse 65% 55% at 50% 30%,rgba(14,116,144,.14) 0%,transparent 60%)',strip:'#2dd4bf',
+    em:'📈',fem:['📊','✨','🎯'],
+    title:'带教说给你的竞品报告提一些反馈',
+    desc:'他打开文档，翻了两页，说："<span class="hl-t">整体框架不错</span>，但数据部分有些问题，还有一个地方逻辑断了。"你屏住了呼吸。',
+    choices:[
+      {ico:'😤',txt:'立刻解释"这部分我是因为……才这么写的"',tag:'辩解',tc:'t-risk',col:'#f87171',
+       d:{hp:0,en:0,rep:-12,str:+10,sk:0,mo:0},
+       story:'带教表情微微一变，说"我还没说完"。你意识到你打断了他。脸有点热。',
+       rip:'带教好感-12，记住：先听完再说话'},
+      {ico:'📝',txt:'认真记下每一条，一个字不遗漏',tag:'倾听',tc:'t-safe',col:'#34d399',
+       d:{hp:0,en:0,rep:+15,sk:+10,str:0,mo:0},
+       story:'你记了七条。带教说完，说"好，按这个方向改一版"，语气比你预想的要满意。',
+       rip:'专业素养+，带教好感+15'},
+      {ico:'💡',txt:'反馈结束后，主动说了你当时的思路',tag:'双向沟通',tc:'t-wild',col:'#a78bfa',
+       d:{hp:0,en:0,rep:+20,sk:+12,str:0,mo:0},
+       story:'"哦，这个逻辑我没想到，这部分其实可以保留。" 一个来回，你们第一次真正平等地讨论了一个观点。',
+       rip:'建立真正的对话，带教开始把你当合作者'},
+      {ico:'🙏',txt:'"好的，我都懂，下次一定"',tag:'顺从',tc:'t-cow',col:'#60a5fa',
+       d:{hp:0,en:0,rep:+3,str:0,sk:+3,mo:0},
+       story:'带教点头走了。你其实有一条没完全理解，但没敢再问。这个疑问会在你下一份报告里再次出现。',
+       rip:'安全过关，但留下知识盲区'},
+    ]
+  },
+  {
+    id:'i10',time:'第二周',phase:'跨部门沟通',
+    bg:'radial-gradient(ellipse 60% 50% at 40% 40%,rgba(6,78,59,.18) 0%,transparent 60%)',strip:'#34d399',
+    em:'🤝',fem:['💬','📋','🏢'],
+    title:'带教让你去对接研发同学推一个小功能',
+    desc:'研发说："<span class="hl-r">这个需求不在排期里，下个版本再看吧。</span>"你知道带教要求本周五上线，两边夹着你，怎么办？',
+    choices:[
+      {ico:'📊',txt:'用数据说服研发：这个功能上线可以提升CTR 8%',tag:'数据驱动',tc:'t-snk',col:'#a78bfa',
+       d:{hp:0,en:0,rep:+18,str:+10,sk:+8,mo:0},
+       story:'"如果有数据支撑，我可以帮你走紧急排期。"你拿出了竞品的CTR数据。研发答应了。',
+       rip:'学会用数据推动协作，声誉大幅提升'},
+      {ico:'🙁',txt:'回去告诉带教研发不配合',tag:'推卸',tc:'t-risk',col:'#f87171',
+       d:{hp:0,en:0,rep:-10,str:+5,sk:0,mo:0},
+       story:'"你去再沟通一下，说明优先级。"带教皱眉，说这是实习生最常踩的坑——沟通是你的事。',
+       rip:'带教失望，跨部门沟通能力被质疑'},
+      {ico:'🧩',txt:'找到研发的老板，直接升级沟通',tag:'越级',tc:'t-wild',col:'#fbbf24',
+       d:{hp:0,en:0,rep:-5,str:0,sk:0,mo:0},
+       story:'研发老板答应了，但执行的同学有点不开心——你越过了他，这在职场是有代价的。',
+       rip:'事成了，但得罪了执行层，小心后续'},
+      {ico:'💬',txt:'先和研发建立私下关系，再聊需求',tag:'迂回',tc:'t-cow',col:'#60a5fa',
+       d:{hp:0,en:-5,rep:+8,str:0,sk:+5,mo:-10},
+       story:'你问他下午要不要一起吃个东西，饭桌上聊到需求，他说"这样说嘛，明天我给你看看时间"。',
+       rip:'人情世故+，比硬推需求更有效'},
+    ]
+  },
+  {
+    id:'i11',time:'转正评估前',phase:'转正博弈',
+    bg:'radial-gradient(ellipse 70% 60% at 50% 40%,rgba(245,158,11,.14) 0%,transparent 60%)',strip:'#f0b429',
+    em:'🎯',fem:['📋','⭐','💼'],
+    title:'距离转正评估还有两周，你要怎么冲刺？',
+    desc:'你听说了：<span class="hl-g">转正率看绩效（60%）+ 影响力（30%）+ 带教认可（10%）</span>。带教说"你整体还不错，但需要一个拿得出手的成果"。',
+    choices:[
+      {ico:'🚀',txt:'主动提出一个可以量化的小项目，独立推进',tag:'主动出击',tc:'t-wild',col:'#a78bfa',
+       d:{hp:0,en:-12,rep:+20,str:+15,sk:+12,mo:0},
+       story:'你提了一个"用户分层运营策略"，带教批了，你做完后DAU提升了2.3%——这个数字可以写进简历了。',
+       rip:'拿到可量化成果，转正概率大幅提升'},
+      {ico:'📝',txt:'把之前所有工作整理成量化周报',tag:'留痕',tc:'t-safe',col:'#34d399',
+       d:{hp:0,en:-5,rep:+12,str:0,sk:+5,mo:0},
+       story:'"带动UV提升18%、竞品报告覆盖7家……"你第一次意识到，用数字说话和用感受说话完全是两个量级。',
+       rip:'留痕意识极重要，转正/跳槽都要靠它'},
+      {ico:'🤝',txt:'多和正式员工建立关系，增加曝光',tag:'影响力',tc:'t-cow',col:'#60a5fa',
+       d:{hp:0,en:-5,rep:+10,str:0,sk:0,mo:-15},
+       story:'你请了三个跨组同学吃了饭，他们在内部讨论你转正时都说了"这个实习生印象不错"。',
+       rip:'影响力+，口碑是晋升的隐形武器'},
+      {ico:'😤',txt:'继续认真干活，相信结果说话',tag:'本分',tc:'t-risk',col:'#f87171',
+       d:{hp:0,en:-8,rep:+5,str:0,sk:+8,mo:0},
+       story:'你的工作质量很高，但评估会议上带教介绍你时只说了"配合度好，执行没问题"——没有一个亮点被提出来。',
+       rip:'努力被看见需要主动包装，光低头干活不够'},
+    ]
+  },
+  {
+    id:'i12',time:'转正结果',phase:'终局',
+    bg:'radial-gradient(ellipse 70% 60% at 50% 40%,rgba(16,185,129,.14) 0%,transparent 60%)',strip:'#34d399',
+    em:'🏆',fem:['🎉','⭐','🥂'],
+    title:'带教发来消息：HR会和你谈转正的事',
+    desc:'你看着这条消息，心跳了很久。不管结果如何，你已经和三个月前站在门口的自己，<span class="hl-t">不一样了</span>。',
+    choices:[
+      {ico:'🎉',txt:'立刻截图发给最近的人',tag:'分享',tc:'t-wild',col:'#fbbf24',
+       d:{hp:+15,en:+10,rep:+5,str:-25,sk:0,mo:0},
+       story:'"拿到转正offer了！！"朋友们炸了锅。爸妈打来电话，说了几句，声音有点哽咽。你挂完电话，坐在工位上发了两分钟的呆。',
+       rip:'压力骤减，幸福感满值'},
+      {ico:'🔍',txt:'先仔细看清楚条款再庆祝',tag:'冷静',tc:'t-safe',col:'#34d399',
+       d:{hp:0,en:0,rep:+5,str:-15,sk:+5,mo:0},
+       story:'转正薪资、起薪级别、试用期……你把每一条都读了两遍。发现转正职级比预期低了一档，决定和HR沟通一次。',
+       rip:'带着清醒的期待进入新阶段'},
+      {ico:'💭',txt:'一个人坐着，想了很久，然后给自己写了一封信',tag:'仪式感',tc:'t-cow',col:'#60a5fa',
+       d:{hp:+20,en:+5,rep:0,str:-20,sk:0,mo:0},
+       story:'"三个月前的我，连公司楼门都进不去……"你写了满满一页，最后一行是：这只是开始。',
+       rip:'心理能量全面恢复，带着满格的状态开始正式职业生涯'},
+    ]
+  },
+];
+
+// Random events pool
+const RE_POOL=[
+  {em:'☕',title:'茶水间偶遇了一个总监',desc:'"你是新来的实习生？做什么方向的？"他在等咖啡机，整个公司都认识他，他不认识你。',
+   choices:[
+     {ico:'😅',txt:'紧张地自我介绍，说了个错名字',d:{rep:-5,str:+15},story:'他礼貌笑了走了。你懊悔了整个下午。'},
+     {ico:'🤝',txt:'清晰自介，顺带说了你在推的项目',d:{rep:+20,str:+5},story:'"哦，那个项目，挺重要的。"他记住你了。全公司最有价值的五分钟。'},
+   ]},
+  {em:'🚨',title:'工作群出了线上bug，全组紧张',desc:'"谁知道这个报错什么意思？"——你在自己的代码里见过类似的问题！',
+   choices:[
+     {ico:'🤫',txt:'不确定就不说，怕说错',d:{rep:0,str:-8},story:'带教五分钟后自己解决了。你错过了一次被记住的机会。'},
+     {ico:'💡',txt:'发一条"可能是XX原因，试试看？"',d:{rep:+22,sk:+5,str:+10},story:'"哎，还真是！"带教和旁边三个人都看了你一眼。这一眼，值一千次打卡准时。'},
+   ]},
+  {em:'🤧',title:'你打了个喷嚏，带教侧目',desc:'"你感冒了吗？最近别传染给大家……"所有人都抬起了头。',
+   choices:[
+     {ico:'😷',txt:'说"不好意思，我去买个口罩"',d:{rep:+8,str:0},story:'带教说"这个好，注意一下"，其他人低下了头继续工作。'},
+     {ico:'😊',txt:'说"没事没事，可能是空调风"',d:{rep:0,str:+5},story:'带教没说话，但你看到他轻轻往椅子上靠了一下——悄悄和你拉开了点距离。'},
+   ]},
+  {em:'📱',title:'你发现带教在刷你的朋友圈',desc:'你发现飞书对话框里他发来一条"哈哈"——你前天发了一条吐槽加班的朋友圈。',
+   choices:[
+     {ico:'😅',txt:'尴尬地说"那个不是认真的哈"',d:{rep:-5,str:+10},story:'带教说"没事，我懂"，但你看到他随手把你的权限改成了"仅三天可见"对象。'},
+     {ico:'😄',txt:'顺势说"就是说哈，下次我直接找您反馈"',d:{rep:+8,str:-5},story:'带教没想到你这么接，笑了，说"好，有问题来找我"。反而拉近了距离。'},
+   ]},
+];
+
+/* ══════════════ CHAR SELECT ══════════════ */
+let selectedChar=null;
+function renderChars(){
+  const cont=document.getElementById('char-scroll');
+  cont.innerHTML=CHARS.map((c,i)=>`
+    <div class="char-card" id="cc-${c.id}" onclick="selectChar('${c.id}')"
+      style="--cc-col:${c.col};--cc-grad:radial-gradient(ellipse 60% 50% at 30% 40%,${c.col}14 0%,transparent 70%)">
+      <div class="cc-row1">
+        <div class="cc-avatar" style="background:${c.grad}">${c.emoji}</div>
+        <div class="cc-info">
+          <div class="cc-name">
+            ${c.name}
+            <span class="cc-badge" style="color:${c.col};border-color:${c.col}55;background:${c.col}11">${c.badge}</span>
+          </div>
+          <div class="cc-school">${c.school}</div>
+          <div class="cc-tags">${c.tags.map(t=>`<span class="cc-tag">${t}</span>`).join('')}</div>
+        </div>
+      </div>
+      <div class="cc-stats">
+        ${[{l:'初始精力',k:'en',c:'#fbbf24'},{l:'初始声誉',k:'rep',c:'#34d399'},{l:'初始技能',k:'sk',c:'#60a5fa'}]
+          .map(s=>`<div class="cc-stat">
+            <div class="cc-stat-val" style="color:${s.c}">${c.stats[s.k]}</div>
+            <div class="cc-stat-bar"><div class="cc-stat-fill" style="width:${c.stats[s.k]}%;background:${s.c}"></div></div>
+            <div class="cc-stat-label">${s.l}</div>
+          </div>`).join('')}
+      </div>
+      <div class="cc-perk">
+        <div class="cc-perk-label">专属加成</div>
+        <div class="cc-perk-text">${c.perk}</div>
+      </div>
+    </div>`).join('');
+}
+
+function selectChar(id){
+  sfxClick();
+  selectedChar=CHARS.find(c=>c.id===id);
+  document.querySelectorAll('.char-card').forEach(el=>el.classList.remove('selected'));
+  document.getElementById('cc-'+id).classList.add('selected');
+  document.getElementById('btn-confirm').disabled=false;
+}
+
+/* ══════════════ STATS BAR ══════════════ */
+function renderStatsBar(){
+  const c=G.char;
+  const phLbl=G.phase==='hunt'?'🔍 求职阶段':'💼 实习阶段';
+  const dayLbl=G.phase==='hunt'?`求职 Day ${G.huntDay}`:`实习 Day ${G.internDay}`;
+  const evts=curEvts();
+  document.getElementById('stats-bar').innerHTML=`
+    <div class="sb-r1">
+      <div class="sb-left">
+        <div class="sb-avatar">${c.emoji}</div>
+        <div><div class="sb-char">${c.name} · ${c.badge}</div><div class="sb-phase">${phLbl} · 事件 ${G.evtIdx+1}/${evts.length}</div></div>
+      </div>
+      <div class="sb-right">
+        <div class="sb-dot"></div>
+        <div class="sb-day-pill">${dayLbl}</div>
+      </div>
     </div>
-    <div class="srow" id="cch">
-      ${ch.map(c=>`<div class="sopt" style="font-size:44px" onclick="ckComp('${c}','${item.r}')">${c}</div>`).join('')}
+    <div class="stats-row">
+      ${SM.map(m=>`<div class="sr-it" style="--c:${m.c}">
+        <div class="sr-top"><div class="sr-ico">${m.ico}</div><div class="sr-val">${G.stats[m.key]}</div></div>
+        <div class="sr-bar"><div class="sr-fill" style="width:${G.stats[m.key]}%"></div></div>
+        <div class="sr-nm">${m.label}</div>
+      </div>`).join('')}
+    </div>`;
+}
+
+function renderProg(){
+  const evts=curEvts();
+  document.getElementById('prog-track').innerHTML=evts.map((_,i)=>{
+    const cls=i<G.evtIdx?'done':i===G.evtIdx?'active':'';
+    return `<div class="pt-seg ${cls}"></div>`;
+  }).join('');
+}
+
+/* ══════════════ SCENE ══════════════ */
+function curEvts(){return G.phase==='hunt'?HUNT_EVTS:INTERN_EVTS;}
+
+function renderScene(){
+  const evts=curEvts();
+  if(G.evtIdx>=evts.length){renderSummary();return;}
+  const ev=evts[G.evtIdx];
+
+  // Maybe random event
+  if(!G.done&&G.evtIdx>0&&!G.flags['re_'+G.evtIdx]&&Math.random()<.2){
+    const pool=RE_POOL.filter(r=>!G.flags['reDone_'+r.title]);
+    if(pool.length){showRE(pool[Math.floor(Math.random()*pool.length)]);return;}
+  }
+
+  setBG(ev.bg,ev.strip);
+
+  // Build float emojis
+  const poses=[{top:'18%',left:'10%'},{top:'22%',right:'10%'},{top:'58%',left:'8%'}];
+  const femHtml=(ev.fem||[]).map((e,i)=>{
+    const p=poses[i]||{top:'35%',right:'8%'};
+    const ps=Object.entries(p).map(([k,v])=>`${k}:${v}`).join(';');
+    return `<div class="sc-fem" style="${ps};--d:${5+i*1.5}s;--dl:${i*.5}s;--fx:${(Math.random()-.5)*14}px;--fy:${(Math.random()-.5)*10}px">${e}</div>`;
+  }).join('');
+
+  // Alerts
+  const alerts=[];
+  if(G.stats.hp<=30)alerts.push({c:'al-d',t:'💔 状态危险'});
+  if(G.stats.str>=75)alerts.push({c:'al-d',t:'🌋 压力临界'});
+  if(G.stats.en<=20)alerts.push({c:'al-w',t:'⚡ 精力告急'});
+  if(G.stats.rep>=60)alerts.push({c:'al-g',t:'⭐ 声誉上升中'});
+  if(G.flags['dept_intel'])alerts.push({c:'al-g',t:'🗺️ 情报已激活'});
+
+  // Choice count → grid
+  const nc=ev.choices.length;
+  const gcls=nc>=4?'g2':'';
+
+  const pilCol=ev.strip||'var(--lav)';
+
+  document.getElementById('scene-area').innerHTML=`
+    <div class="sc-wrap">
+      <div class="sc-card">
+        <div class="sc-strip" style="--strip:${ev.strip}"></div>
+        <div class="sc-illus">
+          <div class="sc-ibg" style="background:${ev.bg}"></div>
+          ${femHtml}
+          <div class="sc-ivig"></div>
+          <div class="sc-em">${ev.em}</div>
+        </div>
+        <div class="sc-body">
+          <div class="sc-meta">
+            <div class="sc-pill" style="color:${pilCol};background:${pilCol}18;border-color:${pilCol}40">
+              <div class="sc-pill-dot"></div>${ev.phase}
+            </div>
+            <div class="sc-time">${ev.time}</div>
+          </div>
+          <div class="sc-title">${ev.title}</div>
+          <div class="sc-desc">${ev.desc}</div>
+          ${alerts.length?`<div class="sc-alerts">${alerts.map(a=>`<div class="sc-alert ${a.c}">${a.t}</div>`).join('')}</div>`:''}
+        </div>
+      </div>
     </div>
-  </div>`;
-}
-function ckComp(c,r){
-  pck();
-  if(c===r){
-    S.stats.correct++;S.stats.byMode.compose.c++;
-    pok();confetti();feedback(true,['形状大师！🏗️','拼对了！','想象力真棒！'][~~(Math.random()*3)]);npc('ok');
-    S.score++;S.round++;upd();setTimeout(render,1500);
-  }else{
-    S.stats.wrong++;S.stats.byMode.compose.w++;
-    pno();S.wrong++;
-    const hs=['想想这些像什么～','再想想，可以换个角度','提示：'+S.hint];
-    feedback(false,hs[Math.min(S.wrong-1,2)]);npc('no');
-    document.querySelectorAll('#cch .sopt').forEach(el=>{if(el.textContent.trim()===c){el.classList.add('bad');setTimeout(()=>el.classList.remove('bad'),500);}});
-    if(S.wrong>=2)hint();
-  }
+    <div class="ch-sec">
+      <div class="ch-lbl">你会怎么做？</div>
+      <div class="ch-grid ${gcls}" id="ch-grid">
+        ${ev.choices.map((c,ci)=>renderChoiceCard(c,ci)).join('')}
+      </div>
+    </div>
+    <div id="res-area"></div>
+    <div class="nxt-wrap">
+      <button class="btn-nxt" id="btn-nxt" onclick="nextEvt()" disabled>
+        继续 <span class="nxt-arr">→</span>
+      </button>
+    </div>`;
 }
 
-function hint(){
-  pck();npc('hi');S.stats.hints++;
-  if(S.m==='shape'){
-    const t=document.getElementById('tb');if(t){t.classList.add('hi');setTimeout(()=>t.classList.remove('hi'),2200);}
-  }else if(S.m==='rotation'){
-    const t=document.getElementById('rtg');if(t){t.style.transform=`rotate(${S.ans}deg) scale(1.2)`;setTimeout(()=>t.style.transform=`rotate(${S.ans}deg)`,1500);}
-  }else if(S.m==='position'){
-    document.querySelectorAll('.pobj').forEach(el=>{el.style.fontSize='62px';setTimeout(()=>el.style.fontSize='40px',1500);});
-  }else{
-    document.querySelectorAll('#cch .sopt').forEach(el=>{if(el.textContent.trim()===S.ans){el.style.border='4px solid var(--grass)';el.style.background='#E8FFE8';}});
-    setTimeout(()=>{document.querySelectorAll('#cch .sopt').forEach(el=>{el.style.border='';el.style.background='';});},2000);
-  }
+function renderChoiceCard(c,ci){
+  const col=c.col||'var(--lav)';
+  const deltas=Object.entries(c.d||{}).filter(([,v])=>v!==0).map(([k,v])=>{
+    const ico={hp:'❤️',en:'⚡',rep:'⭐',str:'🌀',sk:'📚',mo:'💰'}[k]||'';
+    const isStr=k==='str';
+    const cl=isStr?(v>0?'d-n':'d-p'):(v>0?'d-p':'d-n');
+    return `<span class="c-d ${cl}">${ico}${v>0?'+':''}${v}</span>`;
+  }).join('');
+  return `
+    <div class="c-card" id="cc${ci}" onclick="pick(${ci})" style="--cco:${col}">
+      <div class="c-head">
+        <div class="c-ico">${c.ico}</div>
+        <div class="c-txt">${c.txt}</div>
+        <div class="c-tag ${c.tc}">${c.tag}</div>
+      </div>
+      ${deltas?`<div class="c-deltas">${deltas}</div>`:''}
+    </div>`;
 }
 
-// 生成八卦图数据
-function buildAbility(){
-  const t=S.total||1;
-  const correctRate=S.stats.correct/Math.max(1,(S.stats.correct+S.stats.wrong));
-  const hintRate=S.stats.hints/Math.max(1,t);
-  const shapeC=S.stats.byMode.shape.c, rotC=S.stats.byMode.rotation.c, posC=S.stats.byMode.position.c, compC=S.stats.byMode.compose.c;
-  const totalC=shapeC+rotC+posC+compC||1;
+function pick(ci){
+  if(G.done)return;G.done=true;sfxSel();
+  G.flags['re_'+G.evtIdx]=true;
+  const ev=curEvts()[G.evtIdx];const c=ev.choices[ci];
+  applyD(c.d||{});if(c.flag)G.flags[c.flag]=true;
 
-  function clamp(x){return Math.max(10,Math.min(100,Math.round(x)));}
+  // char bonus application
+  applyCharBonus(c);
 
-  return [
-    {name:'观察力',score:clamp(40+correctRate*50-hintRate*20)},
-    {name:'空间想象',score:clamp(30+(rotC+compC)/totalC*60)},
-    {name:'位置感',score:clamp(30+posC/totalC*60)},
-    {name:'图形组合',score:clamp(25+compC/totalC*70)},
-    {name:'专注度',score:clamp(40+correctRate*40-hintRate*30)},
-    {name:'坚持力',score:clamp(35+S.stats.wrong*4)},
-    {name:'规则感',score:clamp(35+correctRate*40)},
-    {name:'主动探索',score:clamp(40+S.stats.wrong*3+hintRate*10)},
-  ];
-}
+  const net=Object.entries(c.d||{}).reduce((s,[k,v])=>s+(k==='str'?-v:v),0);
+  if(net>10)sfxGood();else if(net<-8)sfxBad();
 
-function renderBagua(){
-  const bagua=document.getElementById('bagua');
-  const abilities=buildAbility();
-  const center=document.createElement('div');
-  center.className='b-center';
-  const avg=abilities.reduce((s,a)=>s+a.score,0)/abilities.length;
-  center.innerHTML=`<span>本次画像</span><span style="font-size:18px;">${avg>=80?'空间小超人':avg>=60?'空间小探险家':'正在生长的小种子'}</span><span style="font-size:11px;">(综合≈${Math.round(avg)}分)</span>`;
-  bagua.innerHTML='';
-  bagua.appendChild(center);
-
-  const pos=[
-    {top:'4%',left:'50%'},{top:'18%',left:'84%'},{top:'50%',left:'93%'},{top:'80%',left:'80%'},
-    {top:'88%',left:'50%'},{top:'80%',left:'18%'},{top:'50%',left:'7%'},{top:'18%',left:'16%'},
-  ];
-  abilities.forEach((ab,i)=>{
-    const it=document.createElement('div');
-    it.className='b-item';
-    it.style.top=pos[i].top;
-    it.style.left=pos[i].left;
-    it.style.transform='translate(-50%,-50%)';
-    it.innerHTML=`<div>${ab.name}</div><strong>${ab.score}</strong>`;
-    bagua.appendChild(it);
+  document.querySelectorAll('.c-card').forEach((el,i)=>{
+    if(i===ci)el.classList.add('sel');else el.classList.add('dim');
   });
+
+  const chips=Object.entries(c.d||{}).filter(([,v])=>v!==0).map(([k,v])=>{
+    const ico={hp:'❤️',en:'⚡',rep:'⭐',str:'🌀',sk:'📚',mo:'💰'}[k]||'';
+    const nm={hp:'生命',en:'精力',rep:'声誉',str:'压力',sk:'技能',mo:'钱包'}[k]||k;
+    const isStr=k==='str';const cl=isStr?(v>0?'rcn':'rcp'):(v>0?'rcp':'rcn');
+    return `<div class="res-chip ${cl}">${ico} ${nm} ${v>0?'+':''}${v}</div>`;
+  }).join('');
+
+  const vico=net>12?'✨':net>4?'✅':net>-4?'😐':net>-12?'😬':'💢';
+
+  document.getElementById('res-area').innerHTML=`
+    <div class="res-wrap">
+      <div class="res-card">
+        <div class="res-top">
+          <div class="res-ico">${vico}</div>
+          <div class="res-body">
+            <div class="res-verdict">结果</div>
+            <div class="res-story">${c.story||''}</div>
+          </div>
+        </div>
+        ${chips?`<div class="res-chips">${chips}</div>`:''}
+        ${c.rip?`<div class="res-ripple"><span>🔮</span>${c.rip}</div>`:''}
+      </div>
+    </div>`;
+
+  document.getElementById('btn-nxt').disabled=false;
+  renderStatsBar();
+
+  if(G.stats.hp<=0){setTimeout(()=>showEnd('burnout'),700);return;}
+  if(G.stats.str>=100){setTimeout(()=>showEnd('stress'),700);return;}
 }
 
-function finish(){
-  showScreen('finish');confetti();confetti();pok();
-  setTimeout(()=>{tone(880,.3);setTimeout(()=>tone(1100,.4),300);},500);
-  const t=S.total,stars=S.score>=t?3:S.score>=Math.floor(t*.6)?2:1;
-  document.getElementById('fst').textContent='⭐'.repeat(stars)+'☆'.repeat(3-stars);
-  document.getElementById('fsc').textContent=`本次在「${MODULES[S.module].name}」一共完成 ${t} 关，答对 ${S.score} 关。`;
-  renderBagua();
-  npc('ok');
+function applyCharBonus(c){
+  if(!G.char)return;
+  const id=G.char.id;
+  // 985研究生：学历光环，面试场景额外声誉
+  if(id==='top985'&&['h5','h6','h9'].includes(curEvts()[G.evtIdx]?.id)&&(c.d.rep||0)>0){
+    G.stats.rep=clamp(G.stats.rep+3);G.deltas.rep+=3;showToast('🎓 学历加成 +3声誉');}
+  // 海归：钱包初始优势已在stats里，英语面试场景再加成
+  if(id==='overseas'&&(c.d.rep||0)>0){G.stats.rep=clamp(G.stats.rep+2);G.deltas.rep+=2;}
+  // AI研究生：技术场景额外技能
+  if(id==='cs_master'&&(c.d.sk||0)>0){G.stats.sk=clamp(G.stats.sk+5);G.deltas.sk+=5;showToast('🤖 AI专长加成 +5技能');}
+  // 双非：突破加成
+  if(id==='double211'&&(c.d.rep||0)>10){G.stats.rep=clamp(G.stats.rep+5);G.deltas.rep+=5;showToast('💪 逆袭加成 +5声誉');}
+  // 产品方向：用户洞察场景
+  if(id==='product'&&['h6','i5'].includes(curEvts()[G.evtIdx]?.id)&&(c.d.rep||0)>0){G.stats.rep=clamp(G.stats.rep+3);G.deltas.rep+=3;}
 }
 
-function shuffle(a){for(let i=a.length-1;i>0;i--){const j=~~(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function nextEvt(){sfxClick();G.evtIdx++;G.done=false;renderStatsBar();renderProg();renderScene();document.getElementById('gs').scrollTo({top:0,behavior:'smooth'});}
+
+/* ══════════════ SUMMARY ══════════════ */
+function renderSummary(){
+  const net=Object.entries(G.deltas).reduce((s,[k,v])=>s+(k==='str'?-v:v),0);
+  const em=net>20?'🎉':net>5?'😊':net>-5?'😐':'😮‍💨';
+  const ti=net>20?'今天表现出色！':net>5?'稳步成长':net>-5?'有起伏，正常':'今天有些艰难…';
+  const rows=SM.map(m=>{
+    const d=G.deltas[m.key]||0;const isStr=m.key==='str';
+    const good=isStr?d<0:d>0;const col=d===0?'var(--muted)':good?'var(--teal)':'var(--coral)';
+    const lbl=d===0?'±0':(d>0?`+${d}`:String(d));
+    return `<div class="sum-row">
+      <div class="sum-l"><span>${m.ico}</span>${m.label}</div>
+      <div class="sum-bar"><div class="sum-bf" style="width:${G.stats[m.key]}%;background:${m.c}"></div></div>
+      <div class="sum-d" style="color:${col}">${lbl}</div>
+    </div>`;
+  }).join('');
+
+  const note=G.phase==='hunt'
+    ?'求职阶段结束。从简历投递到拿下offer，每一步都在影响你进场的位置。<b>真正的考验，从第一天打卡开始。</b>'
+    :`实习Day ${G.internDay}结束。带教心里已经对你有了印象，<b>有些印象一旦形成很难改变。</b>`;
+  const btnTxt=G.phase==='hunt'?'✨ 入职！开始实习生涯 →':`🌅 实习 Day ${G.internDay+1}`;
+
+  document.getElementById('scene-area').innerHTML=`
+    <div class="sum-wrap">
+      <div class="sum-card">
+        <div class="sum-hero">
+          <span class="sum-em">${em}</span>
+          <div class="sum-title">${ti}</div>
+          <div class="sum-sub">${G.phase==='hunt'?`求职 Day ${G.huntDay}`:`实习 Day ${G.internDay}`} · 结束</div>
+        </div>
+        <div class="sum-stats">${rows}</div>
+        <div class="sum-note"><div class="sum-nt">${note}</div></div>
+        <div class="sum-foot"><button class="btn-nd" onclick="advance()">${btnTxt}</button></div>
+      </div>
+    </div>`;
+  G.deltas={hp:0,en:0,rep:0,str:0,sk:0,mo:0};
+  sfxUp();
+}
+
+function advance(){
+  sfxClick();
+  if(G.phase==='hunt'){
+    G.phase='intern';G.evtIdx=0;G.done=false;
+    showToast('🎊 恭喜入职！实习第一天开始');startAmb();
+  }else{
+    G.internDay++;G.evtIdx=0;G.done=false;
+    showToast(`☀️ 实习 Day ${G.internDay} 开始`);
+  }
+  renderStatsBar();renderProg();renderScene();
+  document.getElementById('gs').scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ══════════════ RANDOM EVENT ══════════════ */
+function showRE(re){
+  G.flags['reDone_'+re.title]=true;sfxNotif();
+  document.getElementById('re-ov').innerHTML=`
+    <div class="re-box">
+      <div class="re-tag">⚡ 突发事件</div>
+      <span class="re-em">${re.em}</span>
+      <div class="re-title">${re.title}</div>
+      <div class="re-desc">${re.desc}</div>
+      <div class="re-choices">
+        ${re.choices.map((c,i)=>`
+          <div class="c-card" onclick="resolveRE(${i})" style="--cco:var(--lav)">
+            <div class="c-head">
+              <div class="c-ico">${c.ico}</div>
+              <div class="c-txt">${c.txt}</div>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+  document.getElementById('re-ov').classList.add('show');
+  window._curRE=re;
+}
+function resolveRE(ci){
+  sfxSel();const c=window._curRE.choices[ci];
+  applyD(c.d||{});
+  document.getElementById('re-ov').classList.remove('show');
+  showToast('💬 '+c.story);renderStatsBar();
+  G.flags['re_'+G.evtIdx]=true;renderScene();
+}
+
+/* ══════════════ ENDINGS ══════════════ */
+const ENDS={
+  burnout:{em:'😵',ti:'你撑不住了',sub:'累积的损耗让你在某一天早上\n怎么也打不开那扇公司的门。\n\n不是失败，只是这次走得太用力了。',col:'var(--coral)'},
+  stress:{em:'🌋',ti:'精神临界',sub:'压力表爆了。你在地铁里突然哭了出来\n不知道为什么，也不知道从哪儿开始。\n\n2026年，大厂的压力真实存在——照顾好自己。',col:'var(--lav)'},
+};
+function showEnd(type){
+  sfxDrama();stopAmb();const e=ENDS[type];
+  document.getElementById('end-content').innerHTML=`
+    <span class="end-em">${e.em}</span>
+    <div class="end-title" style="color:${e.col}">${e.ti}</div>
+    <div class="end-sub">${e.sub}</div>
+    <div class="end-grid">
+      ${SM.map(m=>`<div class="end-stat">
+        <div class="end-sl">${m.ico} ${m.label}</div>
+        <div class="end-sv" style="color:${m.c}">${G.stats[m.key]}</div>
+      </div>`).join('')}
+    </div>
+    <button class="btn-main" onclick="restart()">🔄 重新选择角色</button>`;
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s-end').classList.add('active');
+  setBG('radial-gradient(ellipse 70% 60% at 50% 40%,rgba(239,68,68,.1) 0%,transparent 70%)','#f87171');
+}
+
+/* ══════════════ TOAST ══════════════ */
+let ttimer;
+function showToast(msg,dur=2400){
+  const t=document.getElementById('toast');t.innerHTML=msg;t.classList.add('show');
+  clearTimeout(ttimer);ttimer=setTimeout(()=>t.classList.remove('show'),dur);
+}
+
+/* ══════════════ NAV ══════════════ */
+function goChar(){sfxClick();initAudio();document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('s-char').classList.add('active');renderChars();}
+
+function startGame(){
+  if(!selectedChar)return;sfxClick();
+  G.char=selectedChar;G.phase='hunt';G.huntDay=1;G.internDay=1;
+  G.evtIdx=0;G.done=false;G.flags={};
+  G.stats={...selectedChar.stats};
+  G.deltas={hp:0,en:0,rep:0,str:0,sk:0,mo:0};
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s-game').classList.add('active');
+  setBG('radial-gradient(ellipse 65% 55% at 30% 30%,rgba(55,48,160,.22) 0%,transparent 60%)','#a78bfa');
+  renderStatsBar();renderProg();renderScene();
+  showToast(`👤 ${selectedChar.name} · ${selectedChar.badge} · 求职启程`);
+  startAmb();
+}
+
+function restart(){
+  sfxClick();stopAmb();selectedChar=null;
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s-title').classList.add('active');
+  setBG('','');
+}
+
+/* ══════════════ BOOT ══════════════ */
+(function(){
+  const c=document.getElementById('pts');const cols=['rgba(167,139,250,','rgba(45,212,191,','rgba(240,180,41,','rgba(96,165,250,'];
+  for(let i=0;i<16;i++){const p=document.createElement('div');p.className='pt';const sz=2+Math.random()*3;const col=cols[Math.floor(Math.random()*cols.length)];
+  p.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;background:${col}.6)};box-shadow:0 0 4px ${col}.35)};--dx:${(Math.random()-.5)*80}px;animation-duration:${8+Math.random()*12}s;animation-delay:${Math.random()*10}s;`;c.appendChild(p);}
+})();
 </script>
+
 </body>
 </html>
